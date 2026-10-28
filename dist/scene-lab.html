@@ -59,6 +59,7 @@ dialog{color:var(--text);background:linear-gradient(145deg,#20302e,#142022);bord
 const WIDTH = 960;
 const HEIGHT = 540;
 const FLOOR = 454;
+const HERO_SWITCH_COOLDOWN = 1;
 const HEROES = {
   inuyasha: { name: '犬夜叉', title: '半妖少年', role: '近战 · 血刃', color: '#ed775e', maxHp: 180, damage: 26, speed: 244, skill: ['散魂铁爪', '飞刃血爪'], cooldown: [5.5, 8], description: '白发随风，赤衣如火。以连续爪击压制近敌，挥出自身鲜血化成的飞刃，截击远处的妖怪。' },
   kagome: { name: '戈薇', title: '跨越时空的少女', role: '远程 · 净化', color: '#88c9ac', maxHp: 145, damage: 22, speed: 228, skill: ['破魔之矢', '灵光守护'], cooldown: [5.5, 11], description: '从食骨之井来到战国的少女。以弓箭保持距离，用灵力击破妖气，在危急时刻守护同伴。' }
@@ -1062,7 +1063,7 @@ class Game {
   switchTo(id) {
     if (this.state !== 'playing' || id === this.active || !this.save.unlocked.includes(id) || this.health[id] <= 0 || this.switchCooldown > 0) return false;
     cancelInuyasha(this); this.combo = 0; this.comboTime = 0; this.airAttacks = 0;
-    this.active = id; this.hero.vx = 0; this.kagomeBuffer = null; this.switchCooldown = 0.35; this.attackCooldown = 0.1;
+    this.active = id; this.hero.vx = 0; this.kagomeBuffer = null; this.switchCooldown = HERO_SWITCH_COOLDOWN; this.attackCooldown = 0.1;
     this.burst(this.hero.x + 15, this.hero.y + 35, HEROES[id].color, 20);
     this.emit('sound', 'switch'); this.emit('switch', id); return true;
   }
@@ -1235,6 +1236,7 @@ class Game {
     this.attackClock = Math.max(0, this.attackClock - dt); this.attackCooldown = Math.max(0, this.attackCooldown - dt);
     this.dodgeClock = Math.max(0, this.dodgeClock - dt); this.dodgeCooldown = Math.max(0, this.dodgeCooldown - dt);
     this.invulnerable = Math.max(0, this.invulnerable - dt); this.switchCooldown = Math.max(0, this.switchCooldown - dt);
+    if (this.switchCooldown < 1e-9) this.switchCooldown = 0;
     this.comboTime -= dt; this.shake *= 0.85;
     const buffered = this.combatBuffer;
     if (buffered) { buffered.life -= dt; if (buffered.life <= 0) this.combatBuffer = null; }

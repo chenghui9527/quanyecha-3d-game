@@ -1,4 +1,4 @@
-import { LEVELS, HEROES, STORY, FLOOR, clamp, overlaps, statsFor } from './data.js';
+import { LEVELS, HEROES, STORY, FLOOR, HERO_SWITCH_COOLDOWN, clamp, overlaps, statsFor } from './data.js';
 import { persist } from './save.js';
 import { grantGrowth, GROWTH_EVENTS, transferShard, resolveWorldEvent, raceWinner, progressSnapshot, restoreProgress } from './campaign.js';
 import { reducedDamage, absorbBarrier } from './combat.js';
@@ -147,7 +147,7 @@ export class Game {
   switchTo(id) {
     if (this.state !== 'playing' || id === this.active || !this.save.unlocked.includes(id) || this.health[id] <= 0 || this.switchCooldown > 0) return false;
     cancelInuyasha(this); this.combo = 0; this.comboTime = 0; this.airAttacks = 0;
-    this.active = id; this.hero.vx = 0; this.kagomeBuffer = null; this.switchCooldown = 0.35; this.attackCooldown = 0.1;
+    this.active = id; this.hero.vx = 0; this.kagomeBuffer = null; this.switchCooldown = HERO_SWITCH_COOLDOWN; this.attackCooldown = 0.1;
     this.burst(this.hero.x + 15, this.hero.y + 35, HEROES[id].color, 20);
     this.emit('sound', 'switch'); this.emit('switch', id); return true;
   }
@@ -320,6 +320,7 @@ export class Game {
     this.attackClock = Math.max(0, this.attackClock - dt); this.attackCooldown = Math.max(0, this.attackCooldown - dt);
     this.dodgeClock = Math.max(0, this.dodgeClock - dt); this.dodgeCooldown = Math.max(0, this.dodgeCooldown - dt);
     this.invulnerable = Math.max(0, this.invulnerable - dt); this.switchCooldown = Math.max(0, this.switchCooldown - dt);
+    if (this.switchCooldown < 1e-9) this.switchCooldown = 0;
     this.comboTime -= dt; this.shake *= 0.85;
     const buffered = this.combatBuffer;
     if (buffered) { buffered.life -= dt; if (buffered.life <= 0) this.combatBuffer = null; }

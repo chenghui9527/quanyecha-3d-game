@@ -355,10 +355,10 @@ dialog{color:var(--text);background:linear-gradient(145deg,#20302e,#142022);bord
 /* Main campaign HUD. Resource labs retain their own layout. */
 .game-app .battle-frame { container-type: inline-size; --hud-edge: clamp(10px, 2.15cqw, 34px); --hud-gold: #d4b879; }
 .battle-frame .game-hud { top: var(--hud-edge); left: var(--hud-edge); right: var(--hud-edge); gap: 16px; }
-.battle-frame .party { display: flex; flex-direction: column; gap: clamp(9px, .85cqw, 14px); padding-top: 3px; }
+.battle-frame .party { display: flex; flex-direction: column; gap: clamp(8px, .65cqw, 11px); padding-top: 3px; align-items: flex-start; }
 .battle-frame .party-member {
-  width: clamp(210px, 21.5cqw, 355px); min-height: clamp(70px, 5.6cqw, 94px); height: auto;
-  display: flex; align-items: center; padding: 7px 12px 7px 0; gap: 0; border: 0; border-radius: 0;
+  width: clamp(198px, 19.2cqw, 320px); min-height: clamp(64px, 5.05cqw, 84px); height: auto;
+  display: flex; align-items: center; padding: 6px 10px 6px 0; gap: 0; border: 0; border-radius: 0;
   background: transparent; box-shadow: none; overflow: visible; color: #b39a55;
 }
 .battle-frame .party-member::before {
@@ -366,39 +366,39 @@ dialog{color:var(--text);background:linear-gradient(145deg,#20302e,#142022);bord
   background: linear-gradient(105deg, #030b11f2, #091719ed 72%, #071114df);
   clip-path: polygon(3.4% 0, 92.4% 0, 100% 28%, 100% 86%, 96.6% 100%, 0 100%, 0 13%);
 }
-.battle-frame .action-tile::after {
-  content: ''; position: absolute; inset: 4px; border-top: 1px solid #d6bc7530; border-bottom: 1px solid #d6bc751b;
-  pointer-events: none; border-radius: inherit;
-}
-.battle-frame .party-member.active { color: #d8b85f; box-shadow: none; }
-.battle-frame .party-member:not(.active) { width: clamp(210px, 21.5cqw, 355px); min-height: clamp(64px, 5cqw, 84px); padding-block: 5px; }
+.battle-frame .party-member.active { color: #ffe199; filter: drop-shadow(0 0 6px #e7b74e40); }
+.battle-frame .party-member.active::before { background: linear-gradient(105deg, #1e2719fa, #10221af5 65%, #071310f0); }
+.battle-frame .party-member:not(.active) { width: clamp(184px, 17.5cqw, 292px); min-height: clamp(58px, 4.45cqw, 74px); padding-block: 4px; margin-left: 6px; color: #96845a; }
 .member-frame { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; fill: none; stroke: currentColor; stroke-width: 1; }
 .member-frame path { vector-effect: non-scaling-stroke; }.member-frame .frame-inner { opacity: .35; }.member-frame .frame-corners { opacity: .8; }
+.active .member-frame { stroke-width: 1.5; }.active .member-frame .frame-inner { opacity: .65; }
+.battle-frame .party-member.is-switch-cooling::after { content: ''; position: absolute; left: 34%; right: 10px; bottom: 3px; height: 2px; background: linear-gradient(90deg, #ffe199 calc(var(--switch-cooldown) * 100%), #6b665633 0); pointer-events: none; }
 .battle-frame .member-portrait { position: absolute; left: 3%; bottom: 4px; width: 31%; z-index: 1; pointer-events: none; }
 .battle-frame .party-member:not(.active) .member-portrait { width: 28%; }
 .battle-frame .party-member canvas, .battle-frame .party-member:not(.active) canvas { display: block; width: 100%; height: auto; background: none; image-rendering: pixelated; }
 .battle-frame .member-key { top: 43%; left: -7px; z-index: 3; display: grid; place-items: center; width: clamp(19px, 1.55cqw, 26px); height: clamp(19px, 1.55cqw, 26px); min-width: 0; padding: 0; transform: translateY(-50%) rotate(45deg); color: #f5e8b6; background: #030c13; border: 1px solid currentColor; border-radius: 0; font: clamp(12px, 1.15cqw, 19px)/1 Georgia, serif; }
 .battle-frame .member-key b { transform: rotate(-45deg); font: inherit; }
-.battle-frame .member-info { --vital-value-width: clamp(53px, 4.3cqw, 72px); flex: 1; display: flex; flex-direction: column; gap: 4px; position: relative; z-index: 2; margin-left: 36%; }
-.battle-frame .member-heading { display: flex; justify-content: flex-start; align-items: center; gap: clamp(8px, 2cqw, 33px); margin: 0 0 2px; }
-.battle-frame .member-info strong { font: 500 clamp(15px, 1.43cqw, 24px)/1.15 var(--serif); color: #f5e8bd; letter-spacing: .1em; }
-.battle-frame .party-member:not(.active) .member-info { gap: 3px; }.battle-frame .party-member:not(.active) .member-heading { margin-bottom: 0; }.battle-frame .party-member:not(.active) .member-info strong { font-size: clamp(14px, 1.26cqw, 21px); }
+.battle-frame .member-info { --vital-value-width: clamp(50px, 4.05cqw, 64px); flex: 1; display: flex; flex-direction: column; gap: 3px; position: relative; z-index: 2; margin-left: 34%; }
+.battle-frame .member-heading { display: flex; justify-content: flex-start; align-items: center; gap: clamp(6px, 1.2cqw, 20px); margin: 0 0 1px; }
+.battle-frame .member-info strong { font: 500 clamp(14px, 1.25cqw, 21px)/1.15 var(--serif); color: #fff0ca; letter-spacing: .06em; }
+.battle-frame .party-member:not(.active) .member-info { gap: 3px; }.battle-frame .party-member:not(.active) .member-heading { margin-bottom: 0; }.battle-frame .party-member:not(.active) .member-info strong { font-size: clamp(13px, 1.1cqw, 18px); }
 .battle-frame .member-info .member-state { display: inline-block; font: 10px/1.3 var(--serif); color: #d6bd7d; margin: 0; padding: 1px 5px; border: 1px solid #b7964f66; border-radius: 0; }
-.battle-frame .active .member-state { color: #f5d795; border-color: #d4b87999; }.battle-frame .active .member-state::after { content: ' ›'; }
-.battle-frame .party-member:not(.active):not(.locked):not(.is-dead) .member-state { display: none; }
-.battle-frame .member-vital { display: grid; grid-template-columns: minmax(26px, 1fr) var(--vital-value-width); gap: 6px; align-items: center; font-size: clamp(11px, .95cqw, 16px); line-height: 1.15; }
-.battle-frame .party-member:not(.active) .member-vital { font-size: clamp(10px, .85cqw, 14px); }
-.battle-frame .health-vital .vital-label { display: none; }.battle-frame .energy-vital { grid-template-columns: 24px minmax(16px, 1fr) var(--vital-value-width); gap: 5px; }
-.battle-frame .vital-label { color: #c2c9bc; font-size: clamp(10px, .9cqw, 15px); }
-.battle-frame .member-hp, .battle-frame .member-energy-value { color: #eadfc6; font: inherit; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.battle-frame .active .member-state { color: #241808; background: #f2cf78; border-color: #ffe6a2; font-weight: 600; }.battle-frame .active .member-state::after { content: ' ›'; }
+.battle-frame .party-member:not(.active):not(.locked):not(.is-dead):not(.is-switch-cooling) .member-state { display: none; }
+.battle-frame .is-switch-cooling .member-state { color: #ffe7a5; border-color: #e7c77888; font-variant-numeric: tabular-nums; }
+.battle-frame .member-vital { display: grid; grid-template-columns: minmax(24px, 1fr) var(--vital-value-width); gap: 4px; align-items: center; font-size: clamp(10px, .85cqw, 14px); line-height: 1.15; }
+.battle-frame .party-member:not(.active) .member-vital { font-size: clamp(10px, .8cqw, 13px); }
+.battle-frame .health-vital .vital-label { display: none; }.battle-frame .energy-vital { grid-template-columns: 2.2em minmax(12px, 1fr) var(--vital-value-width); gap: 3px; }
+.battle-frame .vital-label { color: #e4efdb; font: inherit; white-space: nowrap; word-break: keep-all; }
+.battle-frame .member-hp, .battle-frame .member-energy-value { color: #fff1d4; font: inherit; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .battle-frame .member-health, .battle-frame .member-energy { display: block; height: clamp(10px, .95cqw, 16px); padding: 2px; margin: 0; border: 1px solid #bda259b3; background: #050e16; border-radius: 1px; overflow: hidden; box-shadow: inset 0 0 0 1px #000; }
-.battle-frame .member-health i { display: block; height: 100%; background: linear-gradient(#bbd392, #8aa87d); transition: width .12s; }
-.battle-frame .party-member[data-hero="inuyasha"] .member-health i { background: linear-gradient(#f28b79, #ca4f49); }
+.battle-frame .member-health i { display: block; height: 100%; background: linear-gradient(#aaff91, #49df69); box-shadow: inset 0 1px #edffdcbf, 0 0 5px #57e67766; transition: width .12s; }
+.battle-frame .party-member[data-hero="inuyasha"] .member-health i { background: linear-gradient(#ffac92, #ff4f56); box-shadow: inset 0 1px #fff0d6bf, 0 0 5px #ff566466; }
 .battle-frame .member-energy { height: clamp(8px, .8cqw, 13px); padding: 1px; }
-.battle-frame .member-energy i { display: block; height: 100%; background: #b39bdd; }
-.battle-frame .energy-vital .vital-label { color: #c7afe7; }
-.battle-frame .party-member[data-hero="kagome"] .member-energy i { background: #72c9df; }
-.battle-frame .party-member[data-hero="kagome"] .energy-vital .vital-label { color: #8dd5e7; }
+.battle-frame .member-energy i { display: block; height: 100%; background: linear-gradient(#efc5ff, #b76bff); box-shadow: inset 0 1px #fff0ffb0, 0 0 5px #c57dff66; }
+.battle-frame .energy-vital .vital-label { color: #edc9ff; }
+.battle-frame .party-member[data-hero="kagome"] .member-energy i { background: linear-gradient(#c1fbff, #27d9ff); box-shadow: inset 0 1px #edffffb0, 0 0 5px #49e6ff66; }
+.battle-frame .party-member[data-hero="kagome"] .energy-vital .vital-label { color: #adf6ff; }
 .battle-frame .member-energy.is-unset { border-style: dashed; background: repeating-linear-gradient(115deg, #c2a7dd12 0 4px, #080f1a 4px 8px); }
 .battle-frame .member-energy.is-unset + .member-energy-value { color: #a3aaa4; }
 .battle-frame .member-effects { font-size: 10px; color: #dabbed; line-height: 1.4; white-space: normal; }
@@ -410,11 +410,17 @@ dialog{color:var(--text);background:linear-gradient(145deg,#20302e,#142022);bord
 .battle-tools { display: flex; justify-content: flex-end; gap: clamp(5px, .65cqw, 11px); }
 .battle-tool { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 4px; color: #ead7a9; text-shadow: 0 2px 3px #000; border: 1px solid #b89f6052; background: #0a1921b3; border-radius: 4px; }
 .battle-tool .ui-icon { width: 22px; height: 22px; }.battle-tool>span[aria-hidden] { font-size: 21px; line-height: 1; }.battle-tool small { font-size: 9px; line-height: 1.4; }
-.battle-frame .objective { width: 100%; min-width: 0; max-width: none; padding: clamp(8px, .8cqw, 13px); margin: 0; border: 1px solid #b29a5c66; border-radius: 2px 10px 2px 10px; background: #0a1b22dc; }
-.battle-frame .objective small { font: clamp(10px, .9cqw, 14px)/1.5 var(--serif); color: #d4c39a; letter-spacing: .06em; margin-bottom: 6px; }
-.battle-frame .objective strong { display: block; font: 500 clamp(12px, 1.16cqw, 19px)/1.5 var(--serif); color: #f0d79c; letter-spacing: .03em; overflow-wrap: anywhere; }
-.hud-relics { display: block; color: #d7d5bd; font-size: clamp(10px, .85cqw, 14px); margin-top: 7px; }
-.battle-frame .journey-track { margin-top: 8px; height: 2px; }
+.battle-frame .objective { --objective-inset: clamp(9px, .85cqw, 14px); position: relative; width: 100%; min-width: 0; max-width: none; padding: clamp(8px, .7cqw, 12px) var(--objective-inset); margin: 0; border: 0; border-radius: 0; background: transparent; backdrop-filter: none; }
+.battle-frame .objective::before { content: ''; position: absolute; inset: 0; clip-path: polygon(3% 0, 97% 0, 100% 6%, 100% 94%, 97% 100%, 0 100%, 0 6%); background: linear-gradient(120deg, #040f18f5, #07171df2 65%, #020c12f2); pointer-events: none; }
+.objective-frame { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: #c5a766; stroke-width: .9; pointer-events: none; }.objective-frame path { vector-effect: non-scaling-stroke; }.objective-frame-inner { opacity: .3; }.objective-frame-corners { stroke: #efd08a; }
+.objective-content { position: relative; }.objective-heading { position: relative; padding-bottom: 6px; margin-bottom: 6px; border-bottom: 1px solid #b69a565e; }
+.objective-heading::after { content: ''; position: absolute; left: calc(-1 * var(--objective-inset) - 3px); bottom: -4px; width: 7px; height: 7px; transform: rotate(45deg); border: 1px solid #f1d17c; background: #08131b; box-shadow: inset 0 0 0 2px #08131b, inset 0 0 0 3px #ac8845; pointer-events: none; }
+.battle-frame .objective small { display: block; font: clamp(10px, .9cqw, 14px)/1.4 var(--serif); color: #dec591; letter-spacing: .06em; margin: 0; overflow-wrap: anywhere; }
+.objective-goal { display: flex; align-items: flex-start; gap: clamp(6px, .55cqw, 9px); }.objective-marker { width: clamp(11px, 1cqw, 16px); height: clamp(11px, 1cqw, 16px); flex-shrink: 0; margin-top: .3em; fill: none; stroke: #f6d785; stroke-width: 1; }.objective-marker path:last-child { fill: #fff0c5; stroke: none; }
+.battle-frame .objective strong { display: block; min-width: 0; font: 500 clamp(12px, 1.16cqw, 19px)/1.5 var(--serif); color: #ffe4a1; letter-spacing: .03em; overflow-wrap: anywhere; text-shadow: 0 1px 3px #000; }
+.objective-summary { margin: 6px 0 0 calc(clamp(11px, 1cqw, 16px) + clamp(6px, .55cqw, 9px)); padding-top: 5px; border-top: 1px solid #b69a563b; }
+.battle-frame .hud-relics { display: block; color: #e8e0c9; font: clamp(10px, .85cqw, 14px)/1.3 var(--serif); letter-spacing: .05em; margin: 0; font-variant-numeric: tabular-nums; }
+.battle-frame .journey-track { margin-top: 5px; height: 2px; background: #d4b87926; }.battle-frame .journey-track i { background: linear-gradient(90deg, #aa8b50, #f0d395); }
 .battle-frame .boss-hud { top: var(--hud-edge); left: 50%; right: auto; width: 32.5%; transform: translateX(-50%); }
 .battle-frame .boss-hud>div:first-child { align-items: baseline; gap: 10px; font: 500 clamp(15px, 1.65cqw, 27px)/1.4 var(--serif); color: #f0e2b5; }
 .battle-frame .boss-hud small { font: clamp(10px, .85cqw, 14px)/1.4 var(--sans); color: #d7c7c1; text-align: right; }
@@ -422,21 +428,25 @@ dialog{color:var(--text);background:linear-gradient(145deg,#20302e,#142022);bord
 .battle-frame .boss-track i { background: linear-gradient(#ef667b, #b73551); }
 .battle-frame .combat-bottom { top: 0; bottom: 0; left: var(--hud-edge); right: var(--hud-edge); gap: 24px; pointer-events: none; }
 .battle-frame .combat-bottom button { pointer-events: auto; }
-.hud-jewel { display: flex; align-items: center; gap: 12px; width: clamp(175px, 19cqw, 314px); margin-right: auto; margin-bottom: clamp(12px, 1.3cqw, 22px); padding: 10px 12px; text-align: left; border: 1px solid #c5a86788; border-radius: 9px 2px; background: linear-gradient(115deg, #07131cef, #102123db); }
-.jewel-symbol { width: clamp(27px, 2.7cqw, 44px); height: clamp(39px, 4.3cqw, 65px); flex-shrink: 0; filter: drop-shadow(0 0 8px #9f8ace3b); }
-.jewel-copy { flex: 1; min-width: 0; }.jewel-copy strong { display: block; font: 500 clamp(13px, 1.18cqw, 19px)/1.5 var(--serif); color: #ebdcb3; letter-spacing: .08em; }
-#hud-jewel-shares { display: block; font-size: clamp(10px, .87cqw, 14px); color: #dcd3b8; white-space: nowrap; }
-.hud-jewel-track { display: block; height: 5px; padding: 1px; border: 1px solid #a8946466; margin: 6px 0; background: #040e18; }.hud-jewel-track i { display: block; height: 100%; background: #8ec8db; }
+.hud-jewel { position: relative; display: flex; align-items: center; gap: clamp(8px, .8cqw, 13px); width: clamp(178px, 17.5cqw, 292px); min-height: clamp(58px, 5.1cqw, 85px); margin-right: auto; margin-bottom: clamp(12px, 1.3cqw, 22px); padding: 8px 12px; text-align: left; border: 0; border-radius: 0; background: transparent; color: #cdb16b; }
+.hud-jewel::before { content: ''; position: absolute; inset: 0; clip-path: polygon(2.7% 0, 97.3% 0, 100% 9.5%, 100% 90.5%, 97.3% 100%, 0 100%, 0 9.5%); background: linear-gradient(105deg, #030e19f5, #07171df2 65%, #020d14f2); pointer-events: none; }
+.jewel-frame { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: .9; pointer-events: none; }.jewel-frame path { vector-effect: non-scaling-stroke; }.jewel-frame-inner { opacity: .4; }.jewel-frame-corners { stroke: #f0d48e; }
+.hud-jewel:hover, .hud-jewel:focus-visible { color: #ffe6a1; }.hud-jewel:hover .jewel-symbol, .hud-jewel:focus-visible .jewel-symbol { filter: drop-shadow(0 0 7px #a9b9f58c); }
+.jewel-symbol { position: relative; width: clamp(28px, 2.65cqw, 44px); height: clamp(42px, 3.85cqw, 64px); flex-shrink: 0; filter: drop-shadow(0 0 6px #8994ff70); }
+.jewel-copy { position: relative; flex: 1; min-width: 0; }.jewel-copy strong { display: block; font: 500 clamp(13px, 1.1cqw, 18px)/1.3 var(--serif); color: #fae9bd; letter-spacing: .1em; white-space: nowrap; }
+#hud-jewel-shares { display: block; font: clamp(10px, .87cqw, 14px)/1.2 var(--serif); color: #e8d8b5; white-space: nowrap; }
+#hud-jewel-sides { display: flex; align-items: baseline; gap: clamp(6px, .6cqw, 10px); white-space: nowrap; }.jewel-side { display: inline-flex; gap: .35em; align-items: baseline; }.jewel-side b { font: inherit; font-variant-numeric: tabular-nums; }.jewel-side.player { color: #f4e9c7; }.jewel-side.enemy { color: #ddc5ef; }.jewel-share-divider { color: #9b8d68; }
+.hud-jewel-track { display: block; height: 5px; padding: 1px; border: 1px solid #c4a969bb; margin: 4px 0; background: #020b13; box-shadow: inset 0 0 0 1px #000; }.hud-jewel-track i { display: block; height: 100%; background: linear-gradient(90deg, #56c6e6, #cef5ff); box-shadow: 0 0 4px #85d7f77a; }
 .action-cluster { position: absolute; top: calc(var(--road-bottom) + clamp(4px, .5cqw, 8px)); right: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-.battle-frame .skill-bar { gap: clamp(5px, .5cqw, 8px); }
-.battle-frame .action-tile { position: relative; width: clamp(54px, 5cqw, 82px); height: clamp(48px, 4.8cqw, 79px); min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 0; padding: 4px 3px; border: 1px solid #c2a46899; border-radius: 8px 2px; background: linear-gradient(145deg, #0c2029ed, #06151af5); color: #ead7ab; touch-action: none; user-select: none; }
+.battle-frame .skill-bar { gap: clamp(2px, .2cqw, 3px); }
+.battle-frame .action-tile { position: relative; width: clamp(50px, 4.2cqw, 68px); height: clamp(44px, 4cqw, 65px); min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 0; padding: 3px; border: 0; border-radius: 0; background: transparent; color: #ead7ab; touch-action: none; user-select: none; }
 .battle-frame .action-tile>kbd { position: absolute; left: 4px; top: 3px; z-index: 2; padding: 1px 3px; min-width: 14px; font-size: 9px; border-color: #c6b17980; color: #f0ddac; background: #0c1821; }
-.action-icon { position: relative; display: grid; place-items: center; width: 100%; flex: 1; min-height: 22px; padding-left: 8px; }
-.action-vector { width: clamp(22px, 2.5cqw, 40px); height: clamp(22px, 2.5cqw, 40px); display: block; filter: drop-shadow(0 0 3px #e6c77b0d); }
+.action-icon { position: relative; display: grid; place-items: center; width: 100%; flex: 1; min-height: 20px; padding-left: 6px; }
+.action-vector { width: clamp(20px, 2.1cqw, 34px); height: clamp(20px, 2.1cqw, 34px); display: block; filter: drop-shadow(0 0 3px #e6c77b0d); }
 .skill-icon { display: grid; place-items: center; }
 .battle-frame[data-active-hero="inuyasha"] .skill-icon { color: #e98c7a; }.battle-frame[data-active-hero="kagome"] .skill-icon { color: #a1dfe1; }
-.battle-frame .skill-name { font: clamp(10px, .9cqw, 14px)/1.6 var(--serif); letter-spacing: .02em; color: #f0e4c5; white-space: nowrap; position: relative; z-index: 2; }
-.battle-frame .cooldown { display: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -45%); width: clamp(24px, 2.7cqw, 43px); aspect-ratio: 1; border-radius: 50%; background: conic-gradient(#e5d3a5 calc(var(--cooldown) * 1turn), #b9b7a329 0); color: #ffedc7; font: 500 clamp(10px, .95cqw, 15px)/1 Georgia, serif; z-index: 1; }
+.battle-frame .skill-name { font: clamp(10px, .8cqw, 13px)/1.35 var(--serif); letter-spacing: 0; color: #f0e4c5; white-space: nowrap; position: relative; z-index: 2; }
+.battle-frame .cooldown { display: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -45%); width: clamp(22px, 2.25cqw, 36px); aspect-ratio: 1; border-radius: 50%; background: conic-gradient(#e5d3a5 calc(var(--cooldown) * 1turn), #b9b7a329 0); color: #ffedc7; font: 500 clamp(10px, .8cqw, 13px)/1 Georgia, serif; z-index: 1; }
 .battle-frame .cooldown::before { content: ''; position: absolute; inset: 3px; border-radius: inherit; background: #0a1720ed; }
 .cooldown-value { position: relative; z-index: 1; font: inherit; }.battle-frame .skill-button.cooling .cooldown { display: grid; place-items: center; }
 .cooling .skill-icon { opacity: .35; }.battle-frame .action-tile:active { background: #375044ed; }
@@ -454,7 +464,7 @@ dialog{color:var(--text);background:linear-gradient(145deg,#20302e,#142022);bord
 .battle-frame .touch-controls>div { gap: 7px; pointer-events: auto; }.battle-frame .touch-controls .touch-actions { display: flex; }
 .battle-frame .touch-controls button { width: 44px; height: 44px; padding: 3px; font-size: 11px; border-color: #d3b77688; background: #10262be0; }.battle-frame .touch-directions button { font-size: 18px; }
 .battle-frame .touch-actions button { border-radius: 6px 2px; }.battle-frame .touch-actions [data-input="attack"] { background: #877244d9; color: #fff1cb; }
-.touch-mode .action-cluster { display: none; }.touch-mode .combat-bottom { inset: 0; pointer-events: none; }.touch-mode .hud-jewel { position: absolute; right: var(--hud-edge); top: clamp(125px, 16cqw, 175px); padding: 5px 8px; width: auto; border: 0; background: #0b1c24b3; }.touch-mode .jewel-symbol, .touch-mode .hud-jewel-track, .touch-mode .jewel-copy strong { display: none; }
+.touch-mode .action-cluster { display: none; }.touch-mode .combat-bottom { inset: 0; pointer-events: none; }.touch-mode .hud-jewel { position: absolute; right: var(--hud-edge); top: calc(var(--hud-edge) + 60px + var(--objective-height, 80px)); padding: 6px 10px; width: auto; min-height: 44px; margin: 0; border: 0; background: transparent; }.touch-mode .jewel-symbol, .touch-mode .hud-jewel-track, .touch-mode .jewel-copy strong { display: none; }
 .touch-mode .scene-interaction kbd { display: none; }
 .game-app dialog.journey-panel[open] { display: flex; flex-direction: column; width: min(1120px, 94vw); max-height: 88dvh; padding: 24px 32px; border-color: #c8ab6f88; border-radius: 3px; background: linear-gradient(125deg, #0b2225f5, #0b1d22f5); }
 .journey-panel .panel-top { flex-shrink: 0; margin-bottom: 0; border: 0; padding-bottom: 14px; }.journey-panel .panel-top h2 { font-size: 34px; }.journey-panel .panel-top small { color: #d6bd86; font-size: 11px; letter-spacing: .1em; }
@@ -473,17 +483,17 @@ dialog{color:var(--text);background:linear-gradient(145deg,#20302e,#142022);bord
   .battle-frame .hud-jewel { gap: 7px; padding: 7px 9px; }.battle-frame .action-cluster { flex-direction: row; align-items: center; gap: 10px; }.battle-frame .combat-hint { order: -1; gap: 7px; }
 }
 @media (max-height: 560px) and (min-aspect-ratio: 4/5) {
-  .battle-frame .party-member { min-height: 62px; padding-block: 5px; }.battle-frame .party-member:not(.active) { min-height: 58px; }.battle-frame .member-info .member-state { font-size: 9px; padding: 1px 4px; }.battle-frame .member-heading { margin: 0; }.battle-frame .member-info { gap: 3px; }.battle-frame .member-health { height: 10px; }.battle-frame .member-energy { height: 8px; }
-  .battle-frame .battle-tool { width: 40px; height: 44px; border-color: #d1b87833; }.battle-frame .objective { padding: 6px 8px; }.battle-frame .objective small { margin-bottom: 3px; }.battle-frame .hud-relics { margin-top: 4px; }.battle-frame .boss-hud>div:first-child { font-size: 14px; }.battle-frame .boss-hud small { font-size: 10px; }
+  .battle-frame .party-member { min-height: 60px; padding-block: 5px; }.battle-frame .party-member:not(.active) { min-height: 54px; }.battle-frame .member-info .member-state { font-size: 9px; padding: 1px 4px; }.battle-frame .member-heading { margin: 0; }.battle-frame .member-info { gap: 3px; }.battle-frame .member-health { height: 10px; }.battle-frame .member-energy { height: 8px; }
+  .battle-frame .battle-tool { width: 40px; height: 44px; border-color: #d1b87833; }.battle-frame .objective { --objective-inset: 9px; padding-block: 7px; }.objective-heading { padding-bottom: 4px; margin-bottom: 4px; }.objective-summary { margin-top: 4px; padding-top: 3px; }.battle-frame .boss-hud>div:first-child { font-size: 14px; }.battle-frame .boss-hud small { font-size: 10px; }
   .game-app dialog.journey-panel[open] { padding: 14px 22px; max-height: 94dvh; }.journey-panel .panel-top h2 { font-size: 25px; margin-top: 5px; }.journey-panel .panel-top { padding-bottom: 7px; }.journal-tabs { margin-bottom: 12px; }.journal-tabs button { padding: 6px 12px; min-height: 36px; font-size: 14px; }.journal-footer { margin-top: 10px; padding-top: 10px; }
 }
 @media (max-aspect-ratio: 4/5) {
   .game-app .battle-frame { top: clamp(205px, 27dvh, 270px); transform: translateX(-50%); overflow: visible; }
   .battle-frame .game-hud { top: -190px; left: 12px; right: 12px; }.battle-frame .party { flex-direction: row; width: 100%; gap: 10px; padding-top: 3px; }.battle-frame .party-member, .battle-frame .party-member:not(.active) { flex: 1; min-width: 0; width: calc(50% - 5px); min-height: 85px; padding: 8px 7px 8px 0; gap: 0; }.battle-frame .member-portrait, .battle-frame .party-member:not(.active) .member-portrait { width: 31%; left: 2%; bottom: 12px; }.battle-frame .member-info { --vital-value-width: 47px; gap: 5px; margin-left: 34%; }.battle-frame .member-heading { gap: 5px; flex-wrap: wrap; }.battle-frame .member-info strong { font-size: 14px; }.battle-frame .member-info .member-state { padding: 1px 3px; font-size: 9px; }.battle-frame .member-vital { grid-template-columns: minmax(9px, 1fr) var(--vital-value-width); gap: 3px; font-size: 10px; }.battle-frame .energy-vital { grid-template-columns: 20px minmax(8px, 1fr) var(--vital-value-width); gap: 2px; }.battle-frame .vital-label { font-size: 10px; }.battle-frame .member-key { width: 17px; height: 17px; left: -5px; font-size: 11px; }.battle-frame .member-health { height: 9px; padding: 1px; }.battle-frame .member-energy { height: 7px; }.battle-frame .member-effects { font-size: 9px; }
-  .battle-frame .hud-corner { position: absolute; top: 105px; left: 0; right: 0; width: auto; display: block; }.battle-frame .battle-tools { float: right; gap: 4px; }.battle-frame .battle-tool { width: 40px; height: 44px; }.battle-frame .objective { width: calc(100% - 137px); padding: 7px 9px; }.battle-frame .objective strong { font-size: 12px; }.battle-frame .objective small { font-size: 10px; margin-bottom: 3px; }.battle-frame .hud-relics { display: inline; font-size: 10px; }.battle-frame .journey-track { margin-top: 4px; }
+  .battle-frame .hud-corner { position: absolute; top: 105px; left: 0; right: 0; width: auto; display: block; }.battle-frame .battle-tools { float: right; gap: 4px; }.battle-frame .battle-tool { width: 40px; height: 44px; }.battle-frame .objective { --objective-inset: 9px; width: calc(100% - 137px); padding-block: 7px; }.battle-frame .objective strong { font-size: 12px; }.battle-frame .objective small { font-size: 10px; }.battle-frame .objective-heading { padding-bottom: 4px; margin-bottom: 4px; }.battle-frame .objective-summary { margin-top: 4px; padding-top: 3px; }.battle-frame .hud-relics { font-size: 10px; }.battle-frame .journey-track { margin-top: 4px; }
   .battle-frame .boss-hud { top: 7px; width: 60%; }.battle-frame .boss-hud>div:first-child { font-size: 14px; display: flex; }.battle-frame .boss-hud small { font-size: 9px; max-width: 55%; text-align: right; margin-top: 0; }.battle-frame .boss-track { height: 5px; margin-top: 3px; }
-  .battle-frame .combat-bottom, .touch-mode .combat-bottom { inset: auto 14px auto; top: calc(100% + 20px); display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }.battle-frame .hud-jewel, .touch-mode .hud-jewel { position: static; width: 175px; padding: 7px 9px; background: #102225e6; border: 1px solid #b69e6266; }.touch-mode .jewel-copy strong { display: block; }.touch-mode .jewel-symbol { display: block; }.battle-frame .jewel-symbol { height: 35px; width: 23px; }.battle-frame .jewel-copy strong { font-size: 13px; }.battle-frame #hud-jewel-shares { font-size: 10px; }
-  .battle-frame .action-cluster { position: static; align-self: flex-end; flex-direction: column; align-items: flex-end; gap: 4px; }.battle-frame .combat-hint { order: 0; }.battle-frame .action-tile { width: 54px; height: 58px; }.battle-frame .skill-name { font-size: 11px; }.battle-frame .action-vector { width: 24px; height: 24px; }.battle-frame .cooldown { width: 27px; font-size: 11px; }.battle-frame .touch-controls { bottom: auto; top: calc(100% + 112px); left: 12px; right: 12px; }.battle-frame .touch-controls>div { gap: 6px; }.battle-frame .touch-controls .touch-actions { display: grid; grid-template-columns: repeat(3, 44px); }.battle-frame .hud-jewel { margin-bottom: 0; }
+  .battle-frame .combat-bottom, .touch-mode .combat-bottom { inset: auto 14px auto; top: calc(100% + 20px); display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }.battle-frame .hud-jewel, .touch-mode .hud-jewel { position: relative; inset: auto; width: 188px; min-height: 62px; padding: 7px 9px; background: transparent; border: 0; }.touch-mode .jewel-copy strong, .touch-mode .hud-jewel-track { display: block; }.touch-mode .jewel-symbol { display: block; }.battle-frame .jewel-symbol { height: 35px; width: 23px; }.battle-frame .jewel-copy strong { font-size: 13px; }.battle-frame #hud-jewel-shares { font-size: 10px; }
+  .battle-frame .action-cluster { position: static; align-self: flex-end; flex-direction: column; align-items: flex-end; gap: 4px; }.battle-frame .combat-hint { order: 0; }.battle-frame .action-tile { width: 50px; height: 50px; }.battle-frame .skill-name { font-size: 10px; }.battle-frame .action-vector { width: 22px; height: 22px; }.battle-frame .cooldown { width: 25px; font-size: 10px; }.battle-frame .touch-controls { bottom: auto; top: calc(100% + 112px); left: 12px; right: 12px; }.battle-frame .touch-controls>div { gap: 6px; }.battle-frame .touch-controls .touch-actions { display: grid; grid-template-columns: repeat(3, 44px); }.battle-frame .hud-jewel { margin-bottom: 0; }
   .battle-frame .dialogue { top: calc(100% + 22px); bottom: auto; left: 12px; right: 12px; min-height: 175px; padding: 14px; gap: 10px; }.battle-frame .dialogue-portrait { width: 43px; }.battle-frame .dialogue p { font-size: 14px; line-height: 1.8; }.battle-frame .dialogue button { min-height: 44px; }
   .game-app .app-shell.playing .toast { top: 20%; max-width: 90%; font-size: 12px; }
   .game-app dialog.journey-panel[open] { padding: 20px 16px; max-height: 92dvh; }.journey-panel .panel-top h2 { font-size: 28px; }.journal-tabs { gap: 0; margin-bottom: 16px; }.journal-tabs button { min-width: max-content; flex: 0 0 auto; font-size: 14px; padding: 9px 13px; }.journey-overview { grid-template-columns: 1fr; gap: 26px; }.journey-current h3 { font-size: 23px; }.journey-scene { font-size: 14px; }.journey-goal strong { font-size: 22px; }.journey-details { border-left: 0; border-top: 1px solid #bba36244; padding: 20px 0 0; }.journey-details .settings-note { margin-bottom: 20px; }.journal-footer { flex-wrap: wrap; gap: 8px; }.journal-footer .button { padding: 10px 12px; font-size: 11px; letter-spacing: .04em; }.journal-home { margin: 0; padding: 8px 5px; font-size: 12px; }
@@ -492,10 +502,30 @@ dialog{color:var(--text);background:linear-gradient(145deg,#20302e,#142022);bord
 /* Preserve readable touch labels and the existing objective/jewel separation. */
 .battle-frame .touch-controls .touch-actions button { font-size: 10px; padding: 2px 1px; white-space: nowrap; letter-spacing: 0; }
 .touch-mode .combat-bottom { bottom: 0; }
-.touch-mode .hud-jewel { top: calc(var(--hud-edge) + 60px + var(--objective-height, 80px)); }
 @media (max-aspect-ratio: 4/5) {
   .battle-frame .member-vital { font-size: 10px; }.battle-frame .vital-label { font-size: 10px; }
   .battle-frame .combat-bottom, .touch-mode .combat-bottom { bottom: auto; }
+}
+
+/* Cut-corner skill frames follow the approved gold-outline reference. */
+.battle-frame .action-tile::before { content: ''; position: absolute; inset: 0; clip-path: polygon(8% 0, 90% 0, 100% 10%, 100% 90%, 90% 100%, 0 100%, 0 10%); background: linear-gradient(145deg, #0c2029f5, #040e14fa); pointer-events: none; }
+.action-frame { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: #d4b264; stroke-width: 1; pointer-events: none; }.action-frame path { vector-effect: non-scaling-stroke; }.action-frame .frame-inner { opacity: .45; }.action-frame .frame-corners { stroke: #ffe0a1; }
+.battle-frame .action-tile:active::before { background: #375044ed; }
+.battle-frame .touch-actions .switch-cooling { color: #c5b792; border-color: #867346; }
+.battle-frame .party-member.active .member-key { color: #ffe6a6; border-color: #ffe6a6; }
+@media (max-aspect-ratio: 4/5) {
+  .battle-frame .party { gap: 8px; align-items: flex-start; }
+  .battle-frame .party-member.active { flex: 1.08; min-height: 78px; }
+  .battle-frame .party-member:not(.active) { flex: .92; min-height: 70px; margin-left: 0; }
+  .battle-frame .member-info .member-state { white-space: nowrap; }
+}
+
+@media (max-height: 560px) and (min-aspect-ratio: 4/5) {
+  .battle-frame .hud-jewel { min-height: 44px; margin-bottom: 4px; padding: 4px 9px; }
+  .battle-frame .jewel-symbol { width: 24px; height: 36px; }
+  .battle-frame .jewel-copy strong { font-size: 12px; line-height: 1.2; }
+  .battle-frame .hud-jewel-track { height: 4px; margin-block: 2px; }
+  .battle-frame #hud-jewel-shares { font-size: 10px; }
 }
 </style>
 </head>
@@ -567,17 +597,28 @@ dialog{color:var(--text);background:linear-gradient(145deg,#20302e,#142022);bord
               <button class="battle-tool" data-sound-toggle aria-label="关闭声音" aria-pressed="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h4l5-5v16l-5-5H3Z"/><g class="sound-waves"><path d="M16 7a7 7 0 0 1 0 10m3-13a11 11 0 0 1 0 16"/></g><path class="sound-muted-mark" d="m16 9 6 6m0-6-6 6"/></svg><span class="sound-label sr-only">声音</span></button>
               <button class="battle-tool" id="pause-button" aria-label="暂停游戏"><span aria-hidden="true">Ⅱ</span><small>Esc</small></button>
             </nav>
-            <div class="objective"><small id="hud-chapter">第一关</small><strong id="hud-objective"></strong><span class="hud-relics" id="hud-relics"></span><div class="journey-track" title="本幕路程"><i id="journey-progress"></i></div></div>
+            <div class="objective">
+              <svg class="objective-frame" viewBox="0 0 240 120" preserveAspectRatio="none" aria-hidden="true"><path d="M7 1H233L239 7V113L233 119H1V7Z"/><path class="objective-frame-inner" d="M11 5H229L235 11V109L229 115H5V11Z"/><path class="objective-frame-corners" d="M1 14C8 14 14 8 14 1M1 8C5 8 8 5 8 1M226 1C226 8 232 14 239 14M232 1C232 5 236 8 239 8M1 106C8 106 14 112 14 119M1 112C5 112 8 115 8 119M226 119C226 112 232 106 239 106M232 119C232 115 236 112 239 112"/></svg>
+              <div class="objective-content">
+                <div class="objective-heading"><small id="hud-chapter">第一关</small></div>
+                <div class="objective-goal"><svg class="objective-marker" viewBox="0 0 18 18" aria-hidden="true"><path d="m9 1 8 8-8 8-8-8Z"/><path d="m9 5 4 4-4 4-4-4Z"/></svg><strong id="hud-objective"></strong></div>
+                <div class="objective-summary"><span class="hud-relics" id="hud-relics"></span><div class="journey-track" title="本幕路程"><i id="journey-progress"></i></div></div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="boss-hud" id="boss-hud" hidden><div><span id="boss-name">逆发结罗</span><small id="boss-state">发丝结界</small></div><div class="boss-track"><i id="boss-health"></i></div></div>
         <div class="combat-bottom" id="combat-bottom" hidden>
-          <button class="hud-jewel" id="hud-jewel" aria-label="查看四魂之玉争夺进度"><svg class="jewel-symbol" viewBox="0 0 40 56" aria-hidden="true"><path d="m20 2 15 24-15 28L5 26Z" fill="#9b9ad0" stroke="#ddc69b"/><path d="m20 2-5 24 5 28 6-28Z" fill="#b8d7ec"/><path d="m5 26 15-8 15 8-15 8Z" fill="#86bed2"/></svg><span class="jewel-copy"><strong>四魂之玉</strong><span class="hud-jewel-track" aria-hidden="true"><i id="hud-jewel-fill"></i></span><span id="hud-jewel-shares">尚未玉碎</span></span></button>
+          <button class="hud-jewel" id="hud-jewel" aria-label="查看四魂之玉争夺进度">
+            <svg class="jewel-frame" viewBox="0 0 300 84" preserveAspectRatio="none" aria-hidden="true"><path d="M8 1H292L299 8V76L292 83H1V8Z"/><path class="jewel-frame-inner" d="M12 5H287L295 13V71L287 79H5V13Z"/><path class="jewel-frame-corners" d="M1 14C8 14 14 8 14 1M1 8C5 8 8 5 8 1M286 1C286 8 292 14 299 14M292 1C292 5 296 8 299 8M1 70C8 70 14 76 14 83M1 76C5 76 8 79 8 83M286 83C286 76 292 70 299 70M292 83C292 79 296 76 299 76"/></svg>
+            <svg class="jewel-symbol" viewBox="0 0 48 72" aria-hidden="true"><defs><linearGradient id="hud-gem-body" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#d6a7ff"/><stop offset=".48" stop-color="#7775e7"/><stop offset="1" stop-color="#74e5ff"/></linearGradient><linearGradient id="hud-gem-light" x1="0" y1="0" x2=".5" y2="1"><stop stop-color="#e3eaff"/><stop offset="1" stop-color="#57d7f3"/></linearGradient></defs><path d="m26 3 14 20 2 20-17 26L7 51 8 31Z" fill="url(#hud-gem-body)" stroke="#ddf1ff" stroke-width=".8"/><path d="m26 3-14 29 16-2 8-6Z" fill="#b6a2ff"/><path d="m26 3 2 27 8-6Z" fill="#f0d5ff"/><path d="m36 24 6 19-14-13Z" fill="#4e63ce"/><path d="m12 32 16-2-3 23Z" fill="url(#hud-gem-light)"/><path d="m8 31 4 1-5 19Z" fill="#5d6bcb"/><path d="m12 32 13 21-18-2Z" fill="#264b97"/><path d="m7 51 18 2v16Z" fill="#319cdb"/><path d="m28 30 14 13-17 10Z" fill="#688ae8"/><path d="m42 43-17 26V53Z" fill="#b9f5ff"/><path d="m25 53-11-3 11 19Z" fill="#87e4ff"/><path d="m26 3 2 27-3 39M8 31l20-1 14 13" fill="none" stroke="#d3efff" stroke-opacity=".65" stroke-width=".7"/><path d="m36 18 1.6 4.4L42 24l-4.4 1.6L36 30l-1.6-4.4L30 24l4.4-1.6ZM13 43l1 2.7 2.7 1-2.7 1-1 2.7-1-2.7-2.7-1 2.7-1Z" fill="#f2fcff"/></svg>
+            <span class="jewel-copy"><strong>四魂之玉</strong><span class="hud-jewel-track" aria-hidden="true"><i id="hud-jewel-fill"></i></span><span id="hud-jewel-shares"><span id="hud-jewel-sides" hidden><span class="jewel-side player">我方 <b id="hud-jewel-player">—</b></span><span class="jewel-share-divider" aria-hidden="true">·</span><span class="jewel-side enemy">敌方 <b id="hud-jewel-enemy">—</b></span></span><span id="hud-jewel-before">尚未玉碎</span></span></span>
+          </button>
           <div class="action-cluster"><div class="skill-bar" aria-label="战斗行动">
-            <button class="action-tile" id="basic-attack" data-input="attack" aria-label="普通攻击，可按住"><kbd>J</kbd><span class="action-icon" id="basic-icon" aria-hidden="true"></span><span class="skill-name">普攻</span></button>
-            <button class="action-tile" id="dodge-action" data-input="dodge" aria-label="闪避"><kbd>K</kbd><span class="action-icon" id="dodge-icon" aria-hidden="true"></span><span class="skill-name">闪避</span></button>
-            <button class="action-tile skill-button" id="skill1" data-input="skill1"><kbd>U</kbd><span class="action-icon"><span class="skill-icon" aria-hidden="true"></span><span class="cooldown" aria-hidden="true"><b class="cooldown-value"></b></span></span><span class="skill-name">散魂铁爪</span></button>
-            <button class="action-tile skill-button" id="skill2" data-input="skill2"><kbd>I</kbd><span class="action-icon"><span class="skill-icon" aria-hidden="true"></span><span class="cooldown" aria-hidden="true"><b class="cooldown-value"></b></span></span><span class="skill-name">飞刃血爪</span></button>
+            <button class="action-tile" id="basic-attack" data-input="attack" aria-label="普通攻击，可按住"><svg class="action-frame" viewBox="0 0 80 72" preserveAspectRatio="none" aria-hidden="true"><path d="M6 1H72L79 8V65L72 71H1V8Z"/><path class="frame-inner" d="M8 4H70L76 10V63L70 68H4V10Z"/><path class="frame-corners" d="M4 19V10L10 4H20M63 4H70L76 10V18M4 55V68H17M62 68H70L76 63V54"/></svg><kbd>J</kbd><span class="action-icon" id="basic-icon" aria-hidden="true"></span><span class="skill-name">普攻</span></button>
+            <button class="action-tile" id="dodge-action" data-input="dodge" aria-label="闪避"><svg class="action-frame" viewBox="0 0 80 72" preserveAspectRatio="none" aria-hidden="true"><path d="M6 1H72L79 8V65L72 71H1V8Z"/><path class="frame-inner" d="M8 4H70L76 10V63L70 68H4V10Z"/><path class="frame-corners" d="M4 19V10L10 4H20M63 4H70L76 10V18M4 55V68H17M62 68H70L76 63V54"/></svg><kbd>K</kbd><span class="action-icon" id="dodge-icon" aria-hidden="true"></span><span class="skill-name">闪避</span></button>
+            <button class="action-tile skill-button" id="skill1" data-input="skill1"><svg class="action-frame" viewBox="0 0 80 72" preserveAspectRatio="none" aria-hidden="true"><path d="M6 1H72L79 8V65L72 71H1V8Z"/><path class="frame-inner" d="M8 4H70L76 10V63L70 68H4V10Z"/><path class="frame-corners" d="M4 19V10L10 4H20M63 4H70L76 10V18M4 55V68H17M62 68H70L76 63V54"/></svg><kbd>U</kbd><span class="action-icon"><span class="skill-icon" aria-hidden="true"></span><span class="cooldown" aria-hidden="true"><b class="cooldown-value"></b></span></span><span class="skill-name">散魂铁爪</span></button>
+            <button class="action-tile skill-button" id="skill2" data-input="skill2"><svg class="action-frame" viewBox="0 0 80 72" preserveAspectRatio="none" aria-hidden="true"><path d="M6 1H72L79 8V65L72 71H1V8Z"/><path class="frame-inner" d="M8 4H70L76 10V63L70 68H4V10Z"/><path class="frame-corners" d="M4 19V10L10 4H20M63 4H70L76 10V18M4 55V68H17M62 68H70L76 63V54"/></svg><kbd>I</kbd><span class="action-icon"><span class="skill-icon" aria-hidden="true"></span><span class="cooldown" aria-hidden="true"><b class="cooldown-value"></b></span></span><span class="skill-name">飞刃血爪</span></button>
           </div><div class="combat-hint"><span><kbd>Tab</kbd> 切换</span><button id="combat-help"><kbd>?</kbd> 操作</button></div></div>
         </div>
         <button class="scene-interaction" id="scene-interaction" data-input="interact" hidden><kbd>E</kbd><span id="scene-interaction-label"></span></button>
@@ -594,6 +635,7 @@ dialog{color:var(--text);background:linear-gradient(145deg,#20302e,#142022);bord
 const WIDTH = 960;
 const HEIGHT = 540;
 const FLOOR = 454;
+const HERO_SWITCH_COOLDOWN = 1;
 const HEROES = {
   inuyasha: { name: '犬夜叉', title: '半妖少年', role: '近战 · 血刃', color: '#ed775e', maxHp: 180, damage: 26, speed: 244, skill: ['散魂铁爪', '飞刃血爪'], cooldown: [5.5, 8], description: '白发随风，赤衣如火。以连续爪击压制近敌，挥出自身鲜血化成的飞刃，截击远处的妖怪。' },
   kagome: { name: '戈薇', title: '跨越时空的少女', role: '远程 · 净化', color: '#88c9ac', maxHp: 145, damage: 22, speed: 228, skill: ['破魔之矢', '灵光守护'], cooldown: [5.5, 11], description: '从食骨之井来到战国的少女。以弓箭保持距离，用灵力击破妖气，在危急时刻守护同伴。' }
@@ -1597,7 +1639,7 @@ class Game {
   switchTo(id) {
     if (this.state !== 'playing' || id === this.active || !this.save.unlocked.includes(id) || this.health[id] <= 0 || this.switchCooldown > 0) return false;
     cancelInuyasha(this); this.combo = 0; this.comboTime = 0; this.airAttacks = 0;
-    this.active = id; this.hero.vx = 0; this.kagomeBuffer = null; this.switchCooldown = 0.35; this.attackCooldown = 0.1;
+    this.active = id; this.hero.vx = 0; this.kagomeBuffer = null; this.switchCooldown = HERO_SWITCH_COOLDOWN; this.attackCooldown = 0.1;
     this.burst(this.hero.x + 15, this.hero.y + 35, HEROES[id].color, 20);
     this.emit('sound', 'switch'); this.emit('switch', id); return true;
   }
@@ -1770,6 +1812,7 @@ class Game {
     this.attackClock = Math.max(0, this.attackClock - dt); this.attackCooldown = Math.max(0, this.attackCooldown - dt);
     this.dodgeClock = Math.max(0, this.dodgeClock - dt); this.dodgeCooldown = Math.max(0, this.dodgeCooldown - dt);
     this.invulnerable = Math.max(0, this.invulnerable - dt); this.switchCooldown = Math.max(0, this.switchCooldown - dt);
+    if (this.switchCooldown < 1e-9) this.switchCooldown = 0;
     this.comboTime -= dt; this.shake *= 0.85;
     const buffered = this.combatBuffer;
     if (buffered) { buffered.life -= dt; if (buffered.life <= 0) this.combatBuffer = null; }
@@ -2681,16 +2724,17 @@ class Renderer {
 }
 
 
-// Presentation only. Energy capacity and spending are deliberately not inferred
-// from attack strength or from the example numbers in the approved mockup.
+// User-approved display defaults; spending, recovery and persisted capacity
+// remain separate from this presentation value and from attack strength.
+const DEFAULT_ENERGY = Object.freeze({ current: 100, max: 100 });
 function energyView(game, id) {
   const label = id === 'kagome' ? '灵力' : '妖力';
-  const reserve = game.energy?.[id];
-  const available = Number.isFinite(reserve?.current) && Number.isFinite(reserve?.max) && reserve.max > 0;
-  const current = available ? Math.max(0, Math.min(reserve.max, reserve.current)) : null;
-  return { label, available, current, max: available ? reserve.max : null,
-    ratio: available ? current / reserve.max : 0,
-    text: available ? `${Math.ceil(current)} / ${Math.ceil(reserve.max)}` : '— / —' };
+  const configured = game.energy?.[id];
+  const defaulted = !(Number.isFinite(configured?.current) && Number.isFinite(configured?.max) && configured.max > 0);
+  const reserve = defaulted ? DEFAULT_ENERGY : configured;
+  const current = Math.max(0, Math.min(reserve.max, reserve.current));
+  return { label, available: true, defaulted, current, max: reserve.max,
+    ratio: current / reserve.max, text: `${Math.ceil(current)} / ${Math.ceil(reserve.max)}` };
 }
 
 function partyView(game) {
@@ -2699,6 +2743,7 @@ function partyView(game) {
     const unlocked = game.save.unlocked.includes(id), max = statsFor(id, game.save.heroes[id]).maxHp;
     const hp = unlocked ? Math.max(0, Math.min(max, game.health[id] || 0)) : 0;
     const status = game.statuses[id], barrier = game.barriers[id];
+    const switchCd = cooldownView(game.switchCooldown, HERO_SWITCH_COOLDOWN);
     const effects = [];
     if (unlocked && status.poison.length) effects.push(`中毒×${status.poison.length}`);
     if (unlocked && status.slow > 0) effects.push('减速');
@@ -2706,7 +2751,9 @@ function partyView(game) {
     return { id, name: HEROES[id].name, key: id === 'inuyasha' ? '1' : '2',
       active: id === game.active, unlocked, max, hp: Math.ceil(hp), ratio: hp / max,
       state: !unlocked ? '尚未加入' : hp <= 0 ? '已倒下' : id === game.active ? '出战' : '队友',
-      effects: effects.join(' · '), energy: energyView(game, id) };
+      effects: effects.join(' · '), switchCd,
+      switchCooling: unlocked && hp > 0 && id !== game.active && switchCd.cooling,
+      energy: unlocked ? energyView(game, id) : { label: id === 'kagome' ? '灵力' : '妖力', available: false, defaulted: false, current: null, max: null, ratio: 0, text: '— / —' } };
   });
 }
 
@@ -3027,6 +3074,7 @@ function onEvent(type, value) {
   if (type === 'dialogueEnd') { $('#dialogue').hidden = true; $('#combat-bottom').hidden = false; $('#touch-controls').hidden = !isTouch; input = {}; updateHud(); }
   if (type === 'unlock') { partySignature = ''; toast(`${HEROES[value].name}加入！按 1 / 2 或 Tab 随时切换伙伴。`); updateSummary(); }
   if (type === 'switch' || type === 'growth') partySignature = '';
+  if (type === 'switch') updateHud();
   if (type === 'raceEnd') { showPanel('四魂之玉 · 争夺结束', 'JOURNEY END', `<div class="result"><h3>${value === 'inuyasha' ? '犬夜叉阵营获胜' : '奈落阵营获胜'}</h3><p>全部真实份额已经归于一方，争夺在此结束。</p><button class="button primary" id="race-home">返回旅程</button></div>`); $('#race-home').addEventListener('click', () => { resumeAfterPanel = false; panel.close(); goHome(); }); }
   if (type === 'victory') result(value);
   if (type === 'dead') {
@@ -3076,18 +3124,30 @@ function updateHud() {
     button.disabled = !member.unlocked || member.hp <= 0;
     button.classList.toggle('locked', !member.unlocked); button.classList.toggle('is-dead', member.unlocked && member.hp <= 0);
     button.classList.toggle('low-health', member.unlocked && member.hp > 0 && member.ratio < 0.25);
-    button.setAttribute('aria-label', `切换${member.name}，${member.state}，生命 ${member.hp} / ${member.max}，${member.energy.label} ${member.energy.available ? member.energy.text : '暂未启用'}${member.effects ? `，${member.effects}` : ''}`);
-    button.querySelector('.member-state').textContent = member.state;
+    button.classList.toggle('is-switch-cooling', member.switchCooling);
+    button.setAttribute('aria-pressed', String(member.active));
+    button.setAttribute('aria-disabled', String(button.disabled || member.switchCooling));
+    button.setAttribute('aria-label', `切换${member.name}，${member.state}，生命 ${member.hp} / ${member.max}，${member.energy.label} ${member.energy.available ? member.energy.text : '尚未加入'}${member.switchCooling ? `，切换冷却 ${member.switchCd.text}` : ''}${member.effects ? `，${member.effects}` : ''}`);
+    button.querySelector('.member-state').textContent = member.switchCooling ? member.switchCd.text : member.state;
+    button.style.setProperty('--switch-cooldown', member.switchCooling ? member.switchCd.ratio : 0);
+    button.title = member.switchCooling ? `切换冷却 ${member.switchCd.text}` : `切换${member.name} · ${member.key}`;
     health.querySelector('i').style.width = `${member.ratio * 100}%`;
     health.setAttribute('aria-valuemax', member.max); health.setAttribute('aria-valuenow', member.hp);
     button.querySelector('.member-hp').textContent = member.unlocked ? `${member.hp} / ${member.max}` : '—';
     energy.querySelector('i').style.width = `${member.energy.ratio * 100}%`;
     energy.classList.toggle('is-unset', !member.energy.available);
-    energy.setAttribute('aria-valuetext', member.energy.available ? member.energy.text : '暂未启用');
+    energy.setAttribute('aria-valuetext', member.energy.available ? member.energy.text : '尚未加入');
+    energy.title = member.energy.defaulted ? '默认展示值；技能消耗与恢复待配置' : '';
     if (member.energy.available) { energy.setAttribute('aria-valuenow', member.energy.current); energy.setAttribute('aria-valuemax', member.energy.max); }
     else { energy.removeAttribute('aria-valuenow'); energy.removeAttribute('aria-valuemax'); }
     button.querySelector('.member-energy-value').textContent = member.energy.text;
     const effects = button.querySelector('.member-effects'); effects.textContent = member.effects; effects.hidden = !member.effects;
+  }
+  for (const button of document.querySelectorAll('[data-input="switch"]')) {
+    const cd = members.find(member => member.switchCooling)?.switchCd;
+    button.setAttribute('aria-disabled', String(!!cd));
+    button.setAttribute('aria-label', cd ? `切换角色，冷却 ${cd.text}` : '切换角色');
+    button.classList.toggle('switch-cooling', !!cd);
   }
   $('#hud-chapter').textContent = `${game.level.chapter} · ${game.level.name}`;
   $('#hud-objective').textContent = objectiveText(game);
@@ -3113,7 +3173,11 @@ function updateHud() {
     $(`#touch-skill${i + 1}`).setAttribute('aria-label', button.getAttribute('aria-label'));
   }
   const progress = jewelProgress(save);
-  $('#hud-jewel-shares').textContent = save.jewel.started ? `我方 ${shareText(progress.inuyasha)} · 敌方 ${shareText(progress.naraku)}` : '尚未玉碎';
+  $('#hud-jewel-sides').hidden = !save.jewel.started;
+  $('#hud-jewel-before').hidden = save.jewel.started;
+  $('#hud-jewel-player').textContent = shareText(progress.inuyasha);
+  $('#hud-jewel-enemy').textContent = shareText(progress.naraku);
+  $('#hud-jewel').setAttribute('aria-label', save.jewel.started ? `查看四魂之玉争夺进度，我方 ${shareText(progress.inuyasha)}，敌方 ${shareText(progress.naraku)}` : '查看四魂之玉，尚未玉碎');
   $('#hud-jewel-fill').style.width = `${save.jewel.started ? progress.inuyasha / 100 : 0}%`;
   const nearby = game.nearbyInteraction(), door = nearby ? null : nearbySceneDoor(game);
   $('#scene-interaction').hidden = game.state !== 'playing' || !(nearby || door);
@@ -3143,7 +3207,12 @@ window.addEventListener('blur', () => { input = {}; if (game.state === 'playing'
 document.addEventListener('visibilitychange', () => { if (document.hidden && game.state === 'playing' && !panel.open) openJournal(); });
 window.addEventListener('pagehide', () => { if (hasSave) persist(save); });
 document.querySelectorAll('[data-input]').forEach(button => {
-  button.addEventListener('pointerdown', event => { if (game.state !== 'playing' || panel.open) return; event.preventDefault(); button.setPointerCapture(event.pointerId); input[button.dataset.input] = true; audio.unlock(); });
+  button.addEventListener('pointerdown', event => {
+    if (game.state !== 'playing' || panel.open) return;
+    event.preventDefault(); button.setPointerCapture(event.pointerId); audio.unlock();
+    if (button.dataset.input === 'switch') { game.switchTo(game.active === 'inuyasha' ? 'kagome' : 'inuyasha'); return; }
+    input[button.dataset.input] = true;
+  });
   for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) button.addEventListener(type, () => { input[button.dataset.input] = false; });
   button.addEventListener('click', event => { if (event.detail === 0 && game.state === 'playing' && !panel.open) { input[button.dataset.input] = true; queuedActions.add(button.dataset.input); audio.unlock(); } });
 });

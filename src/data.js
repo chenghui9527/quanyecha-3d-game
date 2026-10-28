@@ -1,6 +1,7 @@
 export const WIDTH = 960;
 export const HEIGHT = 540;
 export const FLOOR = 454;
+export const HERO_SWITCH_COOLDOWN = 1;
 export const HEROES = {
   inuyasha: { name: '犬夜叉', title: '半妖少年', role: '近战 · 血刃', color: '#ed775e', maxHp: 180, damage: 26, speed: 244, skill: ['散魂铁爪', '飞刃血爪'], cooldown: [5.5, 8], description: '白发随风，赤衣如火。以连续爪击压制近敌，挥出自身鲜血化成的飞刃，截击远处的妖怪。' },
   kagome: { name: '戈薇', title: '跨越时空的少女', role: '远程 · 净化', color: '#88c9ac', maxHp: 145, damage: 22, speed: 228, skill: ['破魔之矢', '灵光守护'], cooldown: [5.5, 11], description: '从食骨之井来到战国的少女。以弓箭保持距离，用灵力击破妖气，在危急时刻守护同伴。' }

@@ -60,11 +60,27 @@ test('the first story encounter recruits Inuyasha, enabling the character switch
   assert.ok(game.save.unlocked.includes('inuyasha')); assert.equal(game.active, 'inuyasha');
   assert.equal(game.switchTo('kagome'), true);
 });
-test('switching preserves independent health and skill cooldown, and respects short switch interval', () => {
+test('switching preserves independent health and skills, and enforces a full one-second interval', () => {
   const game = makeGame(1); game.health.inuyasha = 77; game.cooldowns.inuyasha[0] = 4;
   assert.equal(game.switchTo('kagome'), true); assert.equal(game.switchTo('inuyasha'), false);
-  for (let i = 0; i < 25; i++) game.update(1 / 60, {});
-  assert.equal(game.switchTo('inuyasha'), true); assert.equal(game.health.inuyasha, 77); assert.ok(game.cooldowns.inuyasha[0] > 3);
+  for (let i = 0; i < 59; i++) game.update(1 / 60, {});
+  assert.equal(game.switchTo('inuyasha'), false);
+  game.update(1 / 60, {});
+  assert.equal(game.switchTo('inuyasha'), true); assert.equal(game.health.inuyasha, 77); assert.ok(Math.abs(game.cooldowns.inuyasha[0] - 3) < 1e-8);
+});
+test('keyboard switch requests share cooldown, pause and dialogue freeze it, and a fall still hands off', () => {
+  const game = makeGame(1);
+  game.update(1 / 60, { two: true }); assert.equal(game.active, 'kagome');
+  game.update(1 / 60, { one: true }); assert.equal(game.active, 'kagome');
+  game.update(1 / 60, { switch: true }); assert.equal(game.active, 'kagome');
+  const cd = game.switchCooldown;
+  game.pause(); for (let i = 0; i < 120; i++) game.update(1 / 60, {});
+  assert.equal(game.switchCooldown, cd); game.resume();
+  game.showDialogue('intro'); for (let i = 0; i < 120; i++) game.update(1 / 60, {});
+  assert.equal(game.switchCooldown, cd); closeStory(game);
+  game.health.kagome = 0; game.resolveDefeat();
+  assert.equal(game.active, 'inuyasha'); assert.equal(game.state, 'playing');
+  assert.equal(game.switchCooldown, 1);
 });
 test('holding attack still allows a priority skill, whose cooldown prevents immediate reuse', () => {
   const game = makeGame(1); game.update(1 / 60, { attack: true, skill1: true });

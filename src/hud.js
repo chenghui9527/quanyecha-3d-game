@@ -1,15 +1,16 @@
-import { HEROES, statsFor } from './data.js';
+import { HEROES, HERO_SWITCH_COOLDOWN, statsFor } from './data.js';
 
-// Presentation only. Energy capacity and spending are deliberately not inferred
-// from attack strength or from the example numbers in the approved mockup.
+// User-approved display defaults; spending, recovery and persisted capacity
+// remain separate from this presentation value and from attack strength.
+const DEFAULT_ENERGY = Object.freeze({ current: 100, max: 100 });
 export function energyView(game, id) {
   const label = id === 'kagome' ? '灵力' : '妖力';
-  const reserve = game.energy?.[id];
-  const available = Number.isFinite(reserve?.current) && Number.isFinite(reserve?.max) && reserve.max > 0;
-  const current = available ? Math.max(0, Math.min(reserve.max, reserve.current)) : null;
-  return { label, available, current, max: available ? reserve.max : null,
-    ratio: available ? current / reserve.max : 0,
-    text: available ? `${Math.ceil(current)} / ${Math.ceil(reserve.max)}` : '— / —' };
+  const configured = game.energy?.[id];
+  const defaulted = !(Number.isFinite(configured?.current) && Number.isFinite(configured?.max) && configured.max > 0);
+  const reserve = defaulted ? DEFAULT_ENERGY : configured;
+  const current = Math.max(0, Math.min(reserve.max, reserve.current));
+  return { label, available: true, defaulted, current, max: reserve.max,
+    ratio: current / reserve.max, text: `${Math.ceil(current)} / ${Math.ceil(reserve.max)}` };
 }
 
 export function partyView(game) {
@@ -18,6 +19,7 @@ export function partyView(game) {
     const unlocked = game.save.unlocked.includes(id), max = statsFor(id, game.save.heroes[id]).maxHp;
     const hp = unlocked ? Math.max(0, Math.min(max, game.health[id] || 0)) : 0;
     const status = game.statuses[id], barrier = game.barriers[id];
+    const switchCd = cooldownView(game.switchCooldown, HERO_SWITCH_COOLDOWN);
     const effects = [];
     if (unlocked && status.poison.length) effects.push(`中毒×${status.poison.length}`);
     if (unlocked && status.slow > 0) effects.push('减速');
@@ -25,7 +27,9 @@ export function partyView(game) {
     return { id, name: HEROES[id].name, key: id === 'inuyasha' ? '1' : '2',
       active: id === game.active, unlocked, max, hp: Math.ceil(hp), ratio: hp / max,
       state: !unlocked ? '尚未加入' : hp <= 0 ? '已倒下' : id === game.active ? '出战' : '队友',
-      effects: effects.join(' · '), energy: energyView(game, id) };
+      effects: effects.join(' · '), switchCd,
+      switchCooling: unlocked && hp > 0 && id !== game.active && switchCd.cooling,
+      energy: unlocked ? energyView(game, id) : { label: id === 'kagome' ? '灵力' : '妖力', available: false, defaulted: false, current: null, max: null, ratio: 0, text: '— / —' } };
   });
 }
 

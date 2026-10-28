@@ -254,6 +254,7 @@ function onEvent(type, value) {
   if (type === 'dialogueEnd') { $('#dialogue').hidden = true; $('#combat-bottom').hidden = false; $('#touch-controls').hidden = !isTouch; input = {}; updateHud(); }
   if (type === 'unlock') { partySignature = ''; toast(`${HEROES[value].name}加入！按 1 / 2 或 Tab 随时切换伙伴。`); updateSummary(); }
   if (type === 'switch' || type === 'growth') partySignature = '';
+  if (type === 'switch') updateHud();
   if (type === 'raceEnd') { showPanel('四魂之玉 · 争夺结束', 'JOURNEY END', `<div class="result"><h3>${value === 'inuyasha' ? '犬夜叉阵营获胜' : '奈落阵营获胜'}</h3><p>全部真实份额已经归于一方，争夺在此结束。</p><button class="button primary" id="race-home">返回旅程</button></div>`); $('#race-home').addEventListener('click', () => { resumeAfterPanel = false; panel.close(); goHome(); }); }
   if (type === 'victory') result(value);
   if (type === 'dead') {
@@ -303,18 +304,30 @@ function updateHud() {
     button.disabled = !member.unlocked || member.hp <= 0;
     button.classList.toggle('locked', !member.unlocked); button.classList.toggle('is-dead', member.unlocked && member.hp <= 0);
     button.classList.toggle('low-health', member.unlocked && member.hp > 0 && member.ratio < 0.25);
-    button.setAttribute('aria-label', `切换${member.name}，${member.state}，生命 ${member.hp} / ${member.max}，${member.energy.label} ${member.energy.available ? member.energy.text : '暂未启用'}${member.effects ? `，${member.effects}` : ''}`);
-    button.querySelector('.member-state').textContent = member.state;
+    button.classList.toggle('is-switch-cooling', member.switchCooling);
+    button.setAttribute('aria-pressed', String(member.active));
+    button.setAttribute('aria-disabled', String(button.disabled || member.switchCooling));
+    button.setAttribute('aria-label', `切换${member.name}，${member.state}，生命 ${member.hp} / ${member.max}，${member.energy.label} ${member.energy.available ? member.energy.text : '尚未加入'}${member.switchCooling ? `，切换冷却 ${member.switchCd.text}` : ''}${member.effects ? `，${member.effects}` : ''}`);
+    button.querySelector('.member-state').textContent = member.switchCooling ? member.switchCd.text : member.state;
+    button.style.setProperty('--switch-cooldown', member.switchCooling ? member.switchCd.ratio : 0);
+    button.title = member.switchCooling ? `切换冷却 ${member.switchCd.text}` : `切换${member.name} · ${member.key}`;
     health.querySelector('i').style.width = `${member.ratio * 100}%`;
     health.setAttribute('aria-valuemax', member.max); health.setAttribute('aria-valuenow', member.hp);
     button.querySelector('.member-hp').textContent = member.unlocked ? `${member.hp} / ${member.max}` : '—';
     energy.querySelector('i').style.width = `${member.energy.ratio * 100}%`;
     energy.classList.toggle('is-unset', !member.energy.available);
-    energy.setAttribute('aria-valuetext', member.energy.available ? member.energy.text : '暂未启用');
+    energy.setAttribute('aria-valuetext', member.energy.available ? member.energy.text : '尚未加入');
+    energy.title = member.energy.defaulted ? '默认展示值；技能消耗与恢复待配置' : '';
     if (member.energy.available) { energy.setAttribute('aria-valuenow', member.energy.current); energy.setAttribute('aria-valuemax', member.energy.max); }
     else { energy.removeAttribute('aria-valuenow'); energy.removeAttribute('aria-valuemax'); }
     button.querySelector('.member-energy-value').textContent = member.energy.text;
     const effects = button.querySelector('.member-effects'); effects.textContent = member.effects; effects.hidden = !member.effects;
+  }
+  for (const button of document.querySelectorAll('[data-input="switch"]')) {
+    const cd = members.find(member => member.switchCooling)?.switchCd;
+    button.setAttribute('aria-disabled', String(!!cd));
+    button.setAttribute('aria-label', cd ? `切换角色，冷却 ${cd.text}` : '切换角色');
+    button.classList.toggle('switch-cooling', !!cd);
   }
   $('#hud-chapter').textContent = `${game.level.chapter} · ${game.level.name}`;
   $('#hud-objective').textContent = objectiveText(game);
@@ -340,7 +353,11 @@ function updateHud() {
     $(`#touch-skill${i + 1}`).setAttribute('aria-label', button.getAttribute('aria-label'));
   }
   const progress = jewelProgress(save);
-  $('#hud-jewel-shares').textContent = save.jewel.started ? `我方 ${shareText(progress.inuyasha)} · 敌方 ${shareText(progress.naraku)}` : '尚未玉碎';
+  $('#hud-jewel-sides').hidden = !save.jewel.started;
+  $('#hud-jewel-before').hidden = save.jewel.started;
+  $('#hud-jewel-player').textContent = shareText(progress.inuyasha);
+  $('#hud-jewel-enemy').textContent = shareText(progress.naraku);
+  $('#hud-jewel').setAttribute('aria-label', save.jewel.started ? `查看四魂之玉争夺进度，我方 ${shareText(progress.inuyasha)}，敌方 ${shareText(progress.naraku)}` : '查看四魂之玉，尚未玉碎');
   $('#hud-jewel-fill').style.width = `${save.jewel.started ? progress.inuyasha / 100 : 0}%`;
   const nearby = game.nearbyInteraction(), door = nearby ? null : nearbySceneDoor(game);
   $('#scene-interaction').hidden = game.state !== 'playing' || !(nearby || door);
@@ -370,7 +387,12 @@ window.addEventListener('blur', () => { input = {}; if (game.state === 'playing'
 document.addEventListener('visibilitychange', () => { if (document.hidden && game.state === 'playing' && !panel.open) openJournal(); });
 window.addEventListener('pagehide', () => { if (hasSave) persist(save); });
 document.querySelectorAll('[data-input]').forEach(button => {
-  button.addEventListener('pointerdown', event => { if (game.state !== 'playing' || panel.open) return; event.preventDefault(); button.setPointerCapture(event.pointerId); input[button.dataset.input] = true; audio.unlock(); });
+  button.addEventListener('pointerdown', event => {
+    if (game.state !== 'playing' || panel.open) return;
+    event.preventDefault(); button.setPointerCapture(event.pointerId); audio.unlock();
+    if (button.dataset.input === 'switch') { game.switchTo(game.active === 'inuyasha' ? 'kagome' : 'inuyasha'); return; }
+    input[button.dataset.input] = true;
+  });
   for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) button.addEventListener(type, () => { input[button.dataset.input] = false; });
   button.addEventListener('click', event => { if (event.detail === 0 && game.state === 'playing' && !panel.open) { input[button.dataset.input] = true; queuedActions.add(button.dataset.input); audio.unlock(); } });
 });

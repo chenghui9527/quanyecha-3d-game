@@ -12,14 +12,14 @@ function fixture(stage = 0) {
   return game;
 }
 
-test('the HUD follows the active hero without unlocking companions or inventing energy capacity', () => {
+test('the HUD renders display energy defaults without unlocking companions or changing progress', () => {
   const game = fixture(), before = structuredClone(game.save);
   const [active, locked] = partyView(game);
   assert.equal(active.id, 'kagome'); assert.equal(active.key, '2'); assert.equal(active.state, '出战');
-  assert.equal(active.energy.label, '灵力'); assert.equal(active.energy.text, '— / —');
-  assert.equal(active.energy.available, false); assert.equal(active.energy.max, null);
+  assert.equal(active.energy.label, '灵力'); assert.equal(active.energy.text, '100 / 100');
+  assert.equal(active.energy.available, true); assert.equal(active.energy.defaulted, true); assert.equal(active.energy.max, 100);
   assert.equal(locked.id, 'inuyasha'); assert.equal(locked.state, '尚未加入'); assert.equal(locked.hp, 0);
-  assert.equal(locked.energy.label, '妖力');
+  assert.equal(locked.energy.label, '妖力'); assert.equal(locked.energy.available, false); assert.equal(locked.energy.ratio, 0);
   assert.deepEqual(game.save, before); assert.equal(game.energy, undefined);
 });
 
@@ -38,7 +38,8 @@ test('background health, poison and barrier stay bound to their hero when the HU
 
 test('energy presentation never treats attack strength as a reserve, and clamps real reserves without modifying them', () => {
   const game = fixture();
-  assert.equal(energyView(game, 'kagome').available, false);
+  assert.equal(energyView(game, 'kagome').text, '100 / 100');
+  assert.equal(energyView(game, 'kagome').defaulted, true);
   game.energy = { kagome: { current: 100, max: 80 } };
   assert.equal(energyView(game, 'kagome').text, '80 / 80');
   assert.equal(energyView(game, 'kagome').ratio, 1);
@@ -46,6 +47,20 @@ test('energy presentation never treats attack strength as a reserve, and clamps 
   game.energy.kagome.current = 0;
   assert.equal(energyView(game, 'kagome').text, '0 / 80');
   assert.equal(energyView(game, 'kagome').available, true);
+  assert.equal(energyView(game, 'kagome').defaulted, false);
+  game.energy.kagome.max = NaN;
+  assert.equal(energyView(game, 'kagome').text, '100 / 100');
+});
+
+test('switch cooldown follows the reserve hero while the active card remains selected', () => {
+  const game = fixture(2);
+  assert.equal(game.switchTo('kagome'), true);
+  const [active, reserve] = partyView(game);
+  assert.equal(active.active, true); assert.equal(active.switchCooling, false);
+  assert.equal(reserve.id, 'inuyasha'); assert.equal(reserve.switchCooling, true);
+  assert.equal(reserve.switchCd.text, '1.0s');
+  for (let i = 0; i < 60; i++) game.update(1 / 60, {});
+  assert.equal(partyView(game)[1].switchCooling, false);
 });
 
 test('scene goals and collectibles come from live progress; a final cooldown fraction never looks ready', () => {
