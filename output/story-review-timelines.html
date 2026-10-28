@@ -1,0 +1,280 @@
+<div id="shikon-story-review" aria-label="主角线与奈落线的两个剧情时间轴">
+  <style>
+    #shikon-story-review { color: var(--foreground); width: 100%; }
+    #shikon-story-review * { box-sizing: border-box; }
+    #shikon-story-review .st-heading { padding-right: 96px; }
+    #shikon-story-review .st-caption { color: var(--muted-foreground); margin: 8px 0 18px; }
+    #shikon-story-review .st-column-heads, #shikon-story-review .st-stage-summary { display: grid; grid-template-columns: 64px minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+    #shikon-story-review .st-column-heads { padding: 0 0 18px; align-items: start; }
+    #shikon-story-review .st-route-name { display: flex; gap: 10px; align-items: center; font-weight: 500; }
+    #shikon-story-review .st-subtitle { color: var(--muted-foreground); margin-top: 6px; }
+    #shikon-story-review .st-swatch { width: 10px; height: 10px; background: var(--viz-series-1); display: inline-block; flex: 0 0 auto; }
+    #shikon-story-review .st-swatch.hero { border-radius: 50%; }
+    #shikon-story-review .st-swatch.naraku { background: var(--viz-series-2); transform: rotate(45deg); width: 8px; height: 8px; }
+    #shikon-story-review .st-stage { border-top: 1px solid var(--border); }
+    #shikon-story-review summary { list-style: none; }
+    #shikon-story-review summary::-webkit-details-marker { display: none; }
+    #shikon-story-review .st-stage-summary { padding: 17px 0; align-items: stretch; }
+    #shikon-story-review .st-time { color: var(--muted-foreground); display: flex; flex-direction: column; gap: 4px; overflow-wrap: anywhere; }
+    #shikon-story-review .st-stage-number { color: var(--foreground); font-weight: 500; }
+    #shikon-story-review .st-node { position: relative; padding-left: 25px; min-width: 0; }
+    #shikon-story-review .st-node::before { content: ""; position: absolute; left: 6px; top: -18px; bottom: -18px; width: 1px; background: var(--border); }
+    #shikon-story-review .st-node::after { content: ""; position: absolute; width: 9px; height: 9px; left: 2px; top: 6px; background: var(--viz-series-1); border-radius: 50%; }
+    #shikon-story-review .st-node.naraku::after { background: var(--viz-series-2); border-radius: 0; transform: rotate(45deg); width: 8px; height: 8px; }
+    #shikon-story-review .st-node-title { font-weight: 500; overflow-wrap: anywhere; }
+    #shikon-story-review .st-node-sub { color: var(--muted-foreground); margin-top: 5px; }
+    #shikon-story-review .st-route-small { display: none; color: var(--muted-foreground); margin-bottom: 4px; }
+    #shikon-story-review .st-caret { color: var(--muted-foreground); }
+    #shikon-story-review .st-stage[open] > summary .st-caret { display: inline-block; transform: rotate(90deg); }
+    #shikon-story-review .st-stage-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; margin-left: 80px; padding-bottom: 22px; }
+    #shikon-story-review .st-lane { min-width: 0; position: relative; padding-left: 25px; }
+    #shikon-story-review .st-lane::before { content: ""; position: absolute; left: 6px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    #shikon-story-review .st-lane h3 { margin: 0 0 12px; }
+    #shikon-story-review .st-meta { margin: 0 0 12px; overflow-wrap: anywhere; }
+    #shikon-story-review .st-meta-label { font-weight: 500; }
+    #shikon-story-review .st-list { list-style: none; padding: 0; margin: 14px 0; }
+    #shikon-story-review .st-list > li { padding: 0 0 8px; }
+    #shikon-story-review .st-event { position: relative; }
+    #shikon-story-review .st-event::before { content: ""; position: absolute; left: -22px; top: 14px; width: 7px; height: 7px; border-radius: 50%; background: var(--viz-series-1); }
+    #shikon-story-review .naraku .st-event::before { background: var(--viz-series-2); border-radius: 0; transform: rotate(45deg); }
+    #shikon-story-review .st-event > summary { padding: 7px 0; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; overflow-wrap: anywhere; }
+    #shikon-story-review .st-event-id { color: var(--muted-foreground); }
+    #shikon-story-review .st-event-title { font-weight: 500; }
+    #shikon-story-review .st-event > summary::after { content: "+"; color: var(--muted-foreground); margin-left: auto; }
+    #shikon-story-review .st-event[open] > summary::after { content: "−"; }
+    #shikon-story-review .st-event-body { padding: 0 0 12px; }
+    #shikon-story-review .st-event-body p { margin: 7px 0; overflow-wrap: anywhere; }
+    #shikon-story-review .st-side-group { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
+    #shikon-story-review .st-side-group > summary { padding: 8px 0; font-weight: 500; }
+    #shikon-story-review .st-side-group > summary::after { content: " ＋"; color: var(--muted-foreground); }
+    #shikon-story-review .st-side-group[open] > summary::after { content: " −"; }
+    #shikon-story-review .st-side-group .st-event::before { width: 6px; height: 6px; background: var(--border); border-radius: 50%; transform: none; }
+    #shikon-story-review .st-empty { margin: 12px 0; color: var(--muted-foreground); }
+    #shikon-story-review .st-jump { padding: 12px 0 16px 80px; color: var(--muted-foreground); border-top: 1px solid var(--border); }
+    #shikon-story-review .st-origin { padding-left: 18px; margin: 12px 0 0; }
+    #shikon-story-review .st-origin li { padding-bottom: 12px; }
+    #shikon-story-review .st-origin p { margin: 6px 0 0; }
+    #shikon-story-review .st-origin strong { font-weight: 500; }
+    #shikon-story-review .st-rule { border-top: 1px solid var(--border); padding-top: 14px; color: var(--muted-foreground); }
+    @media (max-width: 540px) {
+      #shikon-story-review .st-heading { padding-right: 90px; }
+      #shikon-story-review .st-column-heads { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+      #shikon-story-review .st-column-heads > .st-axis-head { display: none; }
+      #shikon-story-review .st-stage-summary { grid-template-columns: 43px minmax(0, 1fr); gap: 13px; }
+      #shikon-story-review .st-time { grid-row: 1 / 3; }
+      #shikon-story-review .st-node { grid-column: 2; }
+      #shikon-story-review .st-node.naraku { grid-row: 2; }
+      #shikon-story-review .st-route-small { display: block; }
+      #shikon-story-review .st-stage-body { grid-template-columns: minmax(0, 1fr); gap: 24px; margin-left: 56px; }
+      #shikon-story-review .st-jump { padding-left: 56px; }
+      #shikon-story-review .st-event > summary { gap: 5px; }
+    }
+    @media (pointer: coarse) {
+      #shikon-story-review .st-event > summary, #shikon-story-review .st-side-group > summary { min-height: 44px; }
+    }
+  </style>
+  <h2 class="st-heading">双阵营剧情时间轴</h2>
+  <div class="st-caption text-small">剧情先后 · 同期阶段对齐 · 等距分段，不代表游玩时长</div>
+  <div class="st-column-heads">
+    <div class="st-axis-head text-small">共同进程</div>
+    <div>
+      <div class="st-route-name"><span class="st-swatch hero" aria-hidden="true"></span>主角线</div>
+      <div class="st-subtitle text-small">51篇主线 · 22条支线 · v0.1待审核</div>
+    </div>
+    <div>
+      <div class="st-route-name"><span class="st-swatch naraku" aria-hidden="true"></span>奈落线</div>
+      <div class="st-subtitle text-small">39篇主线 · 12条支线 · v0.2开篇已修订</div>
+    </div>
+  </div>
+  <div class="st-chart" aria-label="两个按剧情阶段对齐的时间轴"></div>
+  <div class="st-rule text-small">完整份额集齐 → 立即确定胜负；终局素材按这一规则重排。</div>
+  <div class="sr-only st-live" aria-live="polite"></div>
+  <script type="application/json" id="shikon-timeline-data">{"routes":[{"key":"hero","name":"主角线","version":"v0.1","stages":[{"index":1,"name":"玉碎与启程","main":[{"id":"犬主01","title":"封印与玉碎","episodes":"1～2","source":"动画节点改编","detail":"穿越、解封与玉碎，建立寻找碎片的目标。","world":"M01"},{"id":"犬主02","title":"逆发之森","episodes":"3～4","source":"动画节点改编","detail":"与戈薇合作识破结罗，争取保住或夺回碎片。","world":"M02"},{"id":"犬主03","title":"父亲的墓地","episodes":"5～7","source":"动画节点改编","detail":"面对杀生丸，取得铁碎牙并明确兄弟矛盾。","world":"M03"},{"id":"犬主04","title":"狐火与雷兽","episodes":"9～10","source":"动画节点改编","detail":"帮助七宝对抗雷兽兄弟，七宝随后同行。","world":"M04"},{"id":"犬主05","title":"无月之夜","episodes":"13","source":"动画节点改编","detail":"经历朔夜与蜘蛛头，理解半妖弱点及同伴保护。","world":"M05"}],"side":[{"id":"犬支01","title":"城中的妖蛤","episodes":"正8","detail":"救援城中人物、处理持玉妖怪；若配置真实碎片，另审可选路径与后续归属。","source":"支线待审核"},{"id":"犬支02","title":"能面的诅咒","episodes":"正11","detail":"处理现代能面异闻，补充碎片影响与戈薇家庭生活。","source":"支线待审核"},{"id":"犬支03","title":"小恶灵的安魂","episodes":"正12","detail":"救助亡灵、展开亲情与安魂，不承担通关唯一前置。","source":"支线待审核"}],"goal":"与戈薇合作，理解碎片危险，获得最初伙伴与武器。","people":"犬夜叉、戈薇、枫为开篇核心；冥加、杀生丸、邪见登场；七宝在雷兽事件后同行。","growth":"铁碎牙获得与变化；朔夜是限制，不直接当作新强化。"},{"index":2,"name":"宿怨与同行","main":[{"id":"犬主06","title":"复苏的巫女","episodes":"14～15","source":"动画节点改编","detail":"阻止复活仪式，面对桔梗归来与灵魂牵连。","world":"M06"},{"id":"犬主07","title":"风穴的诅咒","episodes":"16～17","source":"动画节点改编","detail":"与弥勒从冲突转为同行，明确其家族诅咒。","world":"M07"},{"id":"犬主08","title":"借来的妖手","episodes":"18～19","source":"动画节点改编","detail":"应对杀生丸与最猛胜，认识风穴的克制关系。","world":"M08"},{"id":"犬主09","title":"五十年前的骗局","episodes":"20～23","source":"动画节点改编","detail":"追查鬼蜘蛛，理解犬夜叉与桔梗被离间的原因。","world":"M09"},{"id":"犬主10","title":"退治村的灾难","episodes":"24～25","source":"动画节点改编","detail":"结识珊瑚、琥珀、云母，识破嫁祸，建立同行关系。","world":"M10"},{"id":"犬主11","title":"翠子的洞窟","episodes":"26","source":"动画节点改编","detail":"了解玉的起源、净化与污染的背景。","world":"M11"},{"id":"犬主12","title":"琥珀之命","episodes":"29～30","source":"动画节点改编","detail":"面对碎片续命与盗刀胁迫，救援珊瑚姐弟。","world":"M12"}],"side":[{"id":"犬支04","title":"污墨画卷","episodes":"正17","detail":"处理妖画与独立妖术，展开弥勒同行后的冒险。","source":"支线待审核"},{"id":"犬支05","title":"梦心寺的伤口","episodes":"正28","detail":"梦心、弥勒师承及风穴伤口；必要的风穴限制仍由主线说明。","source":"支线待审核"}],"goal":"从旅途收集推进到识破奈落，形成同行队伍。","people":"桔梗复活但独立行动；弥勒、珊瑚、云母先后同行；琥珀受控。","growth":"风穴是弥勒已有能力；翠子洞窟交代玉的历史。"},{"index":3,"name":"风与镜的对手","main":[{"id":"犬主13","title":"桔梗与玉的去向","episodes":"32～33","source":"动画节点改编","detail":"追查碎片转移并理解桔梗的独立计划。","world":"M13"},{"id":"犬主14","title":"刀匠与两把牙","episodes":"34～35","source":"动画节点改编","detail":"结识刀刀斋、主动掌握风之伤；主线幕间交代铃与天生牙。","world":"M14"},{"id":"犬主15","title":"妖狼与风使","episodes":"36～40","source":"动画节点改编","detail":"结识钢牙、识破神乐诱局，参与妖狼族碎片争夺。","world":"M15"},{"id":"犬主16","title":"镜中的灵魂","episodes":"41～42","source":"动画节点改编","detail":"对抗神无夺魂与反击，展开戈薇灵力表现。","world":"M16"}],"side":[{"id":"犬支06","title":"地念儿的药田","episodes":"正31","detail":"救助地念儿母子、调查药草与误会；必需解毒准备仍由主线保障。","source":"支线待审核"},{"id":"犬支07","title":"铃与邪见的旅途","episodes":"正35后、79、96、162等","detail":"跨阶段补充铃、邪见的救助与旅途；重要因果有主线对应交代，人物不会因此自动入队。","source":"支线待审核"}],"goal":"应对独立持玉者、神乐与神无，理解桔梗自身计划。","people":"刀刀斋、铃、钢牙、神乐、神无进入相关事件；杀生丸一行保持独立。","growth":"主动掌握风之伤；天生牙救铃以主线幕间交代。"},{"index":4,"name":"断牙与破界","main":[{"id":"犬主17","title":"断牙与重铸","episodes":"43～45","source":"动画节点改编","detail":"悟心鬼折刀、危险妖怪化、自身之牙重铸；幕间交代斗鬼神。","world":"M17"},{"id":"犬主18","title":"双生恶鬼与血亲之局","episodes":"46～50","source":"动画节点改编","detail":"对抗兽郎丸、影郎丸，并再次面对琥珀陷阱。","world":"M18"},{"id":"犬主19","title":"妖血与龙骨","episodes":"51～54","source":"动画节点改编","detail":"了解失控风险，通过龙骨精之战掌握爆流破。","world":"M19"},{"id":"犬主20","title":"黑巫女之咒","episodes":"60～64","source":"动画节点改编","detail":"对抗椿的诅咒，戈薇抵抗操控，交代桔梗旧怨。","world":"M20"},{"id":"犬主21","title":"风中的异心","episodes":"66～67","source":"动画节点改编","detail":"卷入神乐、钢牙与杀生丸之间的夺玉和交易。","world":"M21"},{"id":"犬主22","title":"无双与鬼蜘蛛之心","episodes":"69～71","source":"动画节点改编","detail":"追查无双，识别奈落尚不能舍弃的人心。","world":"M22"},{"id":"犬主23","title":"红色铁碎牙","episodes":"72～74","source":"动画节点改编","detail":"帮助紫织母女，取得破除结界的力量。","world":"M23"},{"id":"犬主24","title":"破城与失踪","episodes":"80～81","source":"动画节点改编","detail":"救援铃、突破奈落据点，随后失去敌方行踪。","world":"M24"}],"side":[{"id":"犬支08","title":"石花与狐火","episodes":"正55","detail":"七宝与石花的情感故事，补充狐妖术运用。","source":"支线待审核"},{"id":"犬支09","title":"桃源乡的诱惑","episodes":"正57～58","detail":"桃源乡、长生诱惑与救援的独立冒险。","source":"支线待审核"},{"id":"犬支10","title":"豹猫族旧怨","episodes":"正75～77","detail":"豹猫旧敌与兄弟阶段性合作，主线成长不依赖必须完成此篇。","source":"支线待审核"}],"goal":"完整经历断刀、失控、重铸及破界，攻入奈落据点。","people":"悟心鬼、灰刃坊、兽郎丸、影郎丸、椿、无双、紫织等进入对应事件。","growth":"铁碎牙重铸、爆流破、红色破界；妖怪化危险单列。"},{"index":5,"name":"亡灵与白灵山","main":[{"id":"犬主25","title":"北方的亡灵","episodes":"82～103中的调查主干","source":"动画节点改编","detail":"由失踪后的传闻进入北方，遭遇凶骨与蛇骨。","world":"M25"},{"id":"犬主26","title":"毒雾与钢铁","episodes":"104～107","source":"动画节点改编","detail":"应对雾骨、炼骨、银骨，展开解毒、救援与追击。","world":"M26"},{"id":"犬主27","title":"清澈的碎片","episodes":"108～111","source":"动画节点改编","detail":"识别睡骨异常，面对蛮骨与蛮龙。","world":"M27"},{"id":"犬主28","title":"白心与圣山","episodes":"112～119","source":"动画节点改编","detail":"调查圣岛、白心上人与结界，突破进入圣山的障碍。","world":"M28"},{"id":"犬主29","title":"七人队的末路","episodes":"120～122","source":"动画节点改编","detail":"在内部夺玉冲突中追击，完成蛮骨决战。","world":"M29"},{"id":"犬主30","title":"山腹的新生","episodes":"123～126","source":"动画节点改编","detail":"面对新生奈落、桔梗遇袭与赤子精神操控。","world":"M30"}],"side":[{"id":"犬支11","title":"月虹之约","episodes":"正83～84","detail":"菖蒲、钢牙旧约与妖狼族领地事件。","source":"支线待审核"},{"id":"犬支12","title":"桔梗的独行","episodes":"正85～87","detail":"桔梗的鬼首城行旅与救赎，以遇见、调查或人物事件展开。","source":"支线待审核"},{"id":"犬支13","title":"伪玉之谜","episodes":"正94～95","detail":"调查伪四魂之玉；伪玉不计入真实份额。","source":"支线待审核"},{"id":"犬支14","title":"洞窟中的两人","episodes":"正98","detail":"戈薇与桔梗共同受困、互相救助；后续对白按是否完成作区分。","source":"支线待审核"}],"goal":"追踪消失的奈落，突破七人队与圣山，面对敌方重组。","people":"七人队各成员、白心上人、赤子登场；桔梗遇袭不等于最终退场。","growth":"解毒和净化准备须有主线可达途径；戈薇抵抗精神操控。"},{"index":6,"name":"彼世与心脏","main":[{"id":"犬主31","title":"白童子与彼世之门","episodes":"127线索、141～146","source":"动画节点改编","detail":"追踪白童子与炎蹄，接触宝仙鬼父子及门番。","world":"M31"},{"id":"犬主32","title":"归来的巫女","episodes":"149～151；嵌入147～148往事","source":"动画节点改编","detail":"追查圣大人并参与救治桔梗，必要回忆补全因缘。","world":"M32"},{"id":"犬主33","title":"记忆与心脏","episodes":"152～154","source":"动画节点改编","detail":"承接琥珀反抗与神乐提供的弱点线索。","world":"M33"},{"id":"犬主34","title":"墓地夺玉","episodes":"155～157","source":"动画节点改编","detail":"参与宝仙鬼碎片争夺，取得金刚枪破。","world":"M34"},{"id":"犬主35","title":"不妖璧与御灵丸","episodes":"165～167，承接158～163","source":"动画节点改编","detail":"追查外置心脏、魍魉丸和御灵丸；展示借玉力量与净化风险。","world":"M35"}],"side":[{"id":"犬支15","title":"文化祭的妖怪","episodes":"正127～128","detail":"现代校园文化祭与妖怪事件。","source":"支线待审核"},{"id":"犬支16","title":"弥勒与珊瑚的承诺","episodes":"正131～132","detail":"弥勒与珊瑚的承诺与感情深化；必要信任仍有主线交代。","source":"支线待审核"},{"id":"犬支17","title":"娑罗的旧愿","episodes":"正133～134","detail":"娑罗与杀生丸的独立往事。","source":"支线待审核"},{"id":"犬支18","title":"乾坤之薙刀","episodes":"正136～140","detail":"星黄泉、妖刀与封印的完整独立冒险。","source":"支线待审核"}],"goal":"争夺彼世碎片，寻找奈落身体之外的真正弱点。","people":"白童子、炎蹄、宝仙鬼父子、门番、阿毘姬、魍魉丸与御灵丸进入主线。","growth":"金刚枪破；琥珀恢复记忆并反抗，碎片使用风险得到展示。"},{"index":7,"name":"分身的反旗","main":[{"id":"犬主36","title":"白童子的反旗","episodes":"完1","source":"动画节点改编","detail":"追击夺玉者，识破赤子与魍魉丸的计划。","world":"M36"},{"id":"犬主37","title":"自由之风","episodes":"完2～3","source":"动画节点改编","detail":"接触神乐求援与结局；幕间承接天生牙重锻。","world":"M37"},{"id":"犬主38","title":"龙鳞与妖穴","episodes":"完4～5","source":"动画节点改编","detail":"通过夺鬼事件与妖灵大圣试炼驾驭龙鳞力量。","world":"M38"},{"id":"犬主39","title":"魍魉丸的心脏","episodes":"完6","source":"动画节点改编","detail":"介入多方战斗，寻找真正打击奈落弱点的机会。","world":"M39"}],"side":[{"id":"犬支19","title":"妖狼墓地的试炼","episodes":"完2","detail":"钢牙五雷指试炼：通过调查或协助呈现其个人成长；不默认钢牙可操作，主线不要求玩家完成此篇。","source":"支线待审核"},{"id":"犬支20","title":"狐妖术考试","episodes":"完3","detail":"七宝狐妖术考试，奖励属于后续待配的非通关必需成长。","source":"支线待审核"}],"goal":"利用敌方内部裂痕，争取碎片和弱点线索。","people":"白童子、神乐、魍魉丸相关冲突收束；白夜进入当前故事。","growth":"龙鳞铁碎牙与妖穴试炼；神乐相关结局影响独立人物成长。"},{"index":8,"name":"遗愿与传承","main":[{"id":"犬主40","title":"梓山之弓","episodes":"完7","source":"动画节点改编","detail":"戈薇接受试炼、取得弓并尝试救治桔梗。","world":"M40"},{"id":"犬主41","title":"星夜的遗愿","episodes":"完8","source":"动画节点改编","detail":"经历桔梗相关结局与钢牙失玉线，承接她留下的光。","world":"M41"},{"id":"犬主42","title":"冥界之行","episodes":"完9","source":"动画节点改编","detail":"必要主线幕间：交代铃、杀生丸母亲与冥道成长，随后承接兄弟继承；该篇不默认由玩家操控杀生丸。","world":"M42"},{"id":"犬主43","title":"镜妖与神无","episodes":"完10～11","source":"动画节点改编","detail":"对抗复制铁碎牙力量的镜妖，获取神无线索。","world":"M43"},{"id":"犬主44","title":"毒仙的试炼","episodes":"完12","source":"动画节点改编","detail":"珊瑚修复并提升飞来骨；弥勒承担风穴使用代价。","world":"M44"},{"id":"犬主45","title":"正统的继承","episodes":"完13～15","source":"动画节点改编","detail":"死神鬼、两把牙之刀及兄弟交锋，铁碎牙继承冥道。","world":"M45"}],"side":[{"id":"犬支21","title":"悲伤的花海","episodes":"完10","detail":"花皇、失落与陪伴，补充桔梗相关事件后的情感。","source":"支线待审核"}],"goal":"承接桔梗遗愿，完成梓山、冥界、飞来骨与冥道的因果。","people":"杀生丸母亲、药老毒仙、死神鬼登场；神无事件收束。","growth":"梓山之弓、飞来骨、冥道继承；弥勒药物体现代价而非无条件增强。"},{"index":9,"name":"曲灵与余玉","main":[{"id":"犬主46","title":"瞳子的结界","episodes":"完16","source":"动画节点改编","detail":"经历巫女结界，明确梓山之弓与灵力被封的线索。","world":"M46"},{"id":"犬主47","title":"曲灵与爆碎牙","episodes":"完17～19相关线","source":"动画节点改编","detail":"面对玉的邪念；主线呈现杀生丸觉醒、琥珀受控。","world":"M47"},{"id":"犬主48","title":"琥珀的碎片","episodes":"完19～20改编","source":"动画节点改编","detail":"救援琥珀，争夺其碎片，承接桔梗留下的力量。","world":"M48"}],"side":[{"id":"犬支22","title":"现代的考试","episodes":"完18","detail":"升学考试与两个时代；毕业等必要背景可以在主线简述。","source":"支线待审核"}],"goal":"揭开灵力封印，救援琥珀，面对玉自身的邪念。","people":"瞳子、曲灵登场；杀生丸与琥珀等独立线交汇。","growth":"爆碎牙以主线事件或幕间呈现，不自动授予犬夜叉队伍。"},{"index":10,"name":"最后的归属","main":[{"id":"犬主49","title":"蜘蛛迷城","episodes":"完21～22素材","source":"动画节点改编","detail":"根据情报进入敌方核心区域，突破分隔与妖怪化陷阱。","world":"M49"},{"id":"犬主50","title":"光与影的陷阱","episodes":"完23素材","source":"动画节点改编","detail":"恢复被封力量、救援伙伴，识破白夜与奈落的诱导。","world":"M50"},{"id":"犬主51","title":"四魂归属","episodes":"完24～26素材重排","source":"动画节点改编","detail":"在最后争夺中取得剩余真实份额，触发对应结局。","world":"M51"}],"side":[],"goal":"突破敌方核心区域，完成最后争夺并进入所选路线结局。","people":"队伍关系与已审核的人物分支收束。","growth":"戈薇恢复力量，冥道最终表现与最后夺玉结合；取得完整份额立即结算。"}],"sideSeries":[]},{"key":"naraku","name":"奈落线","version":"v0.2","stages":[{"index":1,"name":"诞生与寻玉","main":[{"id":"奈主01","title":"奈落诞生","episodes":"正20～21及147～148的前史，衔接正1～2","source":"用户指定主干＋动画前史重排","detail":"鬼蜘蛛被火烧伤、受到桔梗照顾，随后让万妖吞噬自己而形成奈落；伪装犬夜叉袭击并抢夺四魂之玉，承接旧日悲剧。以时间跳转经过五十年，等待玉重现与破碎，正式开始碎片收集。","world":"前史＋M01"},{"id":"奈主02","title":"散片追索","episodes":"正3～13的世界背景","source":"游戏补写","detail":"承接第一篇已经开启的收集目标，展开后续战国寻玉与持玉妖怪争夺；目标与份额后配，不默认亲历结罗、父亲墓地或雷兽之战。","world":"M02～M05背景"}],"side":[],"goal":"从鬼蜘蛛的前史开始，让玩家理解奈落如何诞生、为何执着桔梗与四魂之玉，再进入玉碎后的收集。","people":"鬼蜘蛛、桔梗、犬夜叉、诞生后的奈落为第一篇核心；跨越五十年后衔接戈薇带来的玉重现与破碎。不提前安排神乐、神无、白童子或白夜。","growth":""},{"index":2,"name":"伪装与旧怨","main":[{"id":"奈主03","title":"借手之盟","episodes":"正18～19","source":"动画依据","detail":"与杀生丸临时交易，提供妖手及最猛胜，借冲突针对犬夜叉与风穴。","world":"M08"},{"id":"奈主04","title":"洞窟的旧怨","episodes":"正20～23","source":"动画依据","detail":"第一篇已向玩家交代奈落身世；本篇侧重旧日骗局被犬夜叉一方揭露、再次正面交锋及身份暴露后的行动，不重复完整诞生流程。","world":"M09"},{"id":"奈主05","title":"人见城的伪装","episodes":"正24～25","source":"动画依据","detail":"以蔭刀身份与退治师事件为基础，组织城中伪装、陷阱及碎片行动。","world":"M10"},{"id":"奈主06","title":"退治村的碎片","episodes":"正24～26","source":"动画依据","detail":"围绕退治村袭击、嫁祸与取玉展开阵营任务；与城中篇共同构成奈落自己的完整计划。","world":"M10～M11"},{"id":"奈主07","title":"琥珀与铁碎牙","episodes":"正29～30","source":"动画依据","detail":"利用续命碎片控制琥珀、胁迫珊瑚盗刀，承接计划被识破后的结果。","world":"M12"}],"side":[],"goal":"通过交易、伪装和人质关系建立奈落自己的夺玉行动线。","people":"杀生丸是临时交易对象；珊瑚是被嫁祸者；琥珀为受控角色，不等于自愿效忠。","growth":""},{"index":3,"name":"风与镜的分身","main":[{"id":"奈主08","title":"桔梗来访","episodes":"正32～33","source":"动画依据","detail":"与独立行动的桔梗周旋，处理她带来的玉及其隐藏意图；交付结果按游戏分支承接。","world":"M13"},{"id":"奈主09","title":"妖狼诱局","episodes":"正39～40","source":"动画依据","detail":"围绕神乐操纵尸体、嫁祸犬夜叉及夺取钢牙碎片组织任务。","world":"M15"},{"id":"奈主10","title":"神无之镜","episodes":"正41～42","source":"动画依据","detail":"以神无夺魂、反击铁碎牙与夺玉行动为主干，面对戈薇力量造成的变化。","world":"M16"}],"side":[],"goal":"让分身进入夺玉行动，形成与主角团不同的阵营结构。","people":"神乐、神无开始正式活动；桔梗与钢牙保持独立立场。","growth":""},{"index":4,"name":"杀局与裂痕","main":[{"id":"奈主11","title":"读心之鬼","episodes":"正43","source":"动画依据","detail":"悟心鬼针对犬夜叉、折断铁碎牙；妖怪化使计划出现意外。","world":"M17"},{"id":"奈主12","title":"双生杀局","episodes":"正46～50","source":"动画依据","detail":"兽郎丸、影郎丸的袭击与琥珀陷阱，形成相连的分身行动。","world":"M18"},{"id":"奈主13","title":"龙骨解封","episodes":"正53～54","source":"动画依据","detail":"奈落用瘴气溶解封印，借复苏的龙骨精对付犬夜叉；后续承接对手突破的结果。","world":"M19"},{"id":"奈主14","title":"黑巫女的盟约","episodes":"正60～64","source":"动画依据","detail":"椿的诅咒与神乐相关行动，围绕戈薇、桔梗旧怨及四魂之玉展开。","world":"M20"},{"id":"奈主15","title":"神乐的私议","episodes":"正66～67","source":"动画依据","detail":"神乐取得钢牙碎片后私下接触杀生丸，暴露分身追求自由与奈落控制的矛盾。","world":"M21"},{"id":"奈主16","title":"舍弃鬼蜘蛛","episodes":"正69～71","source":"动画依据","detail":"无双分离、失控、恢复记忆与回收，构成奈落自身变化篇章。","world":"M22"},{"id":"奈主17","title":"人质与撤城","episodes":"正80～81","source":"动画依据","detail":"以铃为人质设局；应对杀生丸反击与据点破界，组织撤离及碎片承接。","world":"M24"}],"side":[],"goal":"一面利用对手弱点，一面面对分身异心及无法舍弃的人心。","people":"悟心鬼、兽郎丸、影郎丸、椿、无双进入事件；灰刃坊与紫织不是默认奈落队员。","growth":""},{"index":5,"name":"圣山中的蜕变","main":[{"id":"奈主18","title":"亡者佣兵","episodes":"正102～103及后续揭示","source":"动画依据","detail":"七人队复活与受雇关系，组织掩护路线、持玉者转移等可玩任务。","world":"M25"},{"id":"奈主19","title":"毒雾封路","episodes":"正104～111","source":"动画依据","detail":"借雾骨、炼骨、银骨及其他成员阻击追踪者；处理睡骨状态与蛮骨自身意图。","world":"M26～M27"},{"id":"奈主20","title":"圣山深处","episodes":"正112～119","source":"动画依据","detail":"以圣山结界、白心上人及奈落藏身为基础，组织通路防守与关键行动。","world":"M28"},{"id":"奈主21","title":"佣兵的内斗","episodes":"正120～122","source":"动画依据","detail":"面对炼骨夺取同伴碎片、蛮骨清算及佣兵覆灭后的归属变化。","world":"M29"},{"id":"奈主22","title":"新生奈落","episodes":"正123～126","source":"动画依据","detail":"完成身体重组，分离赤子，袭击桔梗并展开针对戈薇的精神操控。","world":"M30"}],"side":[],"goal":"用佣兵掩护隐匿与身体重组，同时应对同盟自己的利益。","people":"七人队是以碎片复活的佣兵，白心上人有自身因缘；赤子在后段出现。","growth":""},{"index":6,"name":"彼世与藏心","main":[{"id":"奈主23","title":"白童子与血路","episodes":"正141～146","source":"动画依据","detail":"白童子寻找彼世线索、炎蹄活动，奈落接触阿毘姬，为进入彼世铺路。","world":"M31"},{"id":"奈主24","title":"赤子的藏所","episodes":"正149～153相关线","source":"动画依据","detail":"围绕隐藏赤子、琥珀保护与神乐探知弱点的事件组织行动，救治桔梗线按需要成为敌情。","world":"M32～M33"},{"id":"奈主25","title":"血路夺玉","episodes":"正154～157","source":"动画依据","detail":"利用阿毘姬母女打开通路，进入墓地争夺宝仙鬼碎片，面对金刚枪破。","world":"M34"},{"id":"奈主26","title":"隐匿的心脏","episodes":"正165～167，承接158～163","source":"动画依据","detail":"不妖璧隐藏妖气、合成妖怪与御灵丸事件相连，外置弱点与内部隐患逐渐暴露。","world":"M35"}],"side":[],"goal":"争夺彼世碎片，将心脏外置并保护真正弱点。","people":"白童子、炎蹄、阿毘姬、铁鸡、宝仙鬼、魍魉丸与御灵丸分别进入事件。","growth":""},{"index":7,"name":"分身的反叛","main":[{"id":"奈主27","title":"白童子的反叛","episodes":"完1","source":"动画依据","detail":"白童子夺玉、拉拢神乐并企图取代奈落，形成回收与反制行动。","world":"M36"},{"id":"奈主28","title":"归还的心脏","episodes":"完2","source":"动画依据","detail":"围绕神乐求自由、奈落归还心脏与其原作结局展开人物冲突；固定或可改写范围待审。","world":"M37"},{"id":"奈主29","title":"白夜初行","episodes":"完4～5背景","source":"动画节点＋任务补写","detail":"白夜登场有动画依据；其可操作侦察、追踪龙鳞变化和截击流程需为游戏补写。","world":"M38"},{"id":"奈主30","title":"魍魉丸之战","episodes":"完6","source":"动画依据","detail":"对抗魍魉丸并争夺赤子，承接奈落重新吸收心脏相关部分的变化。","world":"M39"}],"side":[],"goal":"围绕奈落自己的权力、心脏与分身控制展开完整冲突。","people":"白童子、赤子、魍魉丸产生取代奈落的意图；神乐追求自由；白夜在完4起进入故事。","growth":""},{"index":8,"name":"蛛丝与遗愿","main":[{"id":"奈主31","title":"蛛丝与净化","episodes":"完6～8相关线","source":"动画依据","detail":"以奈落对桔梗的侵害、桔梗净化计划及钢牙碎片争夺为主干，处理她留下的后果。","world":"M40～M41"},{"id":"奈主32","title":"神无与镜妖","episodes":"完10～11","source":"动画依据","detail":"镜妖夺取铁碎牙力量，伤害转移神无，奈落命令与神无人心发生冲突。","world":"M43"},{"id":"奈主33","title":"冥道的试探","episodes":"完13～15的世界背景","source":"游戏补写","detail":"以神无遗留镜片、兄弟冲突为背景，提出白夜相关的侦察或诱导任务；这段可玩流程并非已核实的奈落亲历。","world":"M45背景"}],"side":[],"goal":"从奈落立场面对桔梗的净化计划、神无冲突及新的敌方力量。","people":"桔梗、钢牙、神无与镜妖是主要交汇人物；药老毒仙、杀生丸母亲不自动变为奈落任务目标。","growth":""},{"index":9,"name":"邪念与余玉","main":[{"id":"奈主34","title":"瞳子的结界","episodes":"完16","source":"动画依据","detail":"奈落利用瞳子相关事件困住戈薇，围绕其力量形成冲突。","world":"M46"},{"id":"奈主35","title":"玉中的邪念","episodes":"完17～19","source":"动画依据","detail":"曲灵借妖怪肉体行动，白夜牵制对手，争夺琥珀与其碎片。","world":"M47"},{"id":"奈主36","title":"琥珀的最后碎片","episodes":"完19～20改编","source":"动画依据＋胜负改编","detail":"袭击持玉者、夺取目标并面对桔梗留下的光；不强制按原作结算奈落已集齐。","world":"M48"}],"side":[],"goal":"利用玉的邪念及琥珀碎片展开最后一轮争夺。","people":"瞳子、曲灵与琥珀成为焦点；曲灵属于玉的邪念，不是普通奈落分身。","growth":""},{"index":10,"name":"归玉之战","main":[{"id":"奈主37","title":"巨蛛之城","episodes":"完21～22素材","source":"动画依据＋任务改编","detail":"以奈落巨大蜘蛛形态及内部陷阱为基础，组织防守、截击、护送与碎片保护。","world":"M49"},{"id":"奈主38","title":"光影之网","episodes":"完23素材","source":"动画依据＋任务改编","detail":"利用净化之光、伙伴牵挂与白夜复制的冥道力量，实施最后诱导和夺玉。","world":"M50"},{"id":"奈主39","title":"归玉之愿","episodes":"完24～26素材重排","source":"游戏结局改编","detail":"取得剩余真实份额即确定胜利；奈落胜利结局需原创，原作败亡仅作为失败分支素材。","world":"M51"}],"side":[],"goal":"将最后攻坚与夺玉安排在同一终局，允许奈落阵营获得自己的胜利结局。","people":"奈落、白夜与敌方关键人物的已审核分支收束。","growth":""}],"sideSeries":[{"id":"奈支01","title":"妖蛤的持玉者","availability":"阶段1","episodes":"正8","source":"动画事件＋奈落任务补写","detail":"从知情者与持玉妖怪切入寻玉，不声称奈落原本参加城中救援。","world":"S01"},{"id":"奈支02","title":"污墨与妖术","availability":"阶段2","episodes":"正17","source":"动画事件＋奈落任务补写","detail":"调查妖画、追索妖术相关线索；可选任务不给主线唯一前置。","world":"S04"},{"id":"奈支03","title":"桃源乡的秘密","availability":"阶段4","episodes":"正57～58","source":"动画事件＋奈落任务补写","detail":"由独立妖术及长生传闻切入追踪和探索。","world":"S09"},{"id":"奈支04","title":"豹猫旧怨的余波","availability":"阶段4","episodes":"正75～77","source":"动画事件＋奈落任务补写","detail":"调查共同旧敌造成的局势，加入可选截击或情报任务。","world":"S10"},{"id":"奈支05","title":"妖狼族的边境","availability":"阶段5","episodes":"正83～84","source":"动画事件＋奈落任务补写","detail":"围绕族群迁移和持玉者踪迹进行侦察，不复制钢牙感情剧情。","world":"S11"},{"id":"奈支06","title":"追踪独行巫女","availability":"阶段5起","episodes":"正85～87","source":"动画事件＋奈落任务补写","detail":"以桔梗行旅为背景提出追踪任务；具体发现须由任务获得。","world":"S12"},{"id":"奈支07","title":"伪玉与炼成者","availability":"阶段5","episodes":"正94～95","source":"动画事件＋奈落任务补写","detail":"调查仿玉事件；仿玉不进入真实收集进度。","world":"S13"},{"id":"奈支08","title":"被封的薙刀","availability":"阶段6","episodes":"正136～140","source":"动画事件＋奈落任务补写","detail":"追查妖刀或封印相关线索，不预设奈落在动画中参与此事。","world":"S18"},{"id":"奈支09","title":"蛛网密信","availability":"阶段1～3","episodes":"无对应动画篇章","source":"游戏原创","detail":"接头、截获信使、追查身份暴露，补足奈落独立情报人物。","world":"原新编N01"},{"id":"奈支10","title":"傀儡疑踪","availability":"阶段3～6","episodes":"无对应动画篇章","source":"游戏原创","detail":"追索失联傀儡与敌方追踪者，进入危险区域回收线索。","world":"原新编N02"},{"id":"奈支11","title":"分身私愿","availability":"阶段4～8","episodes":"无对应完整动画篇章","source":"游戏原创补充","detail":"深化分身与受控人物意图；主线必需背叛仍由主线交代。","world":"原新编N03"},{"id":"奈支12","title":"鬼蜘蛛残梦","availability":"阶段2～9","episodes":"以动画人物背景为基础","source":"游戏原创补充","detail":"扩展第一篇未展开的额外记忆与执念，不重复必需身世主干，也不承担无双或赤子主线的唯一前置。","world":"原新编N04"}]}],"origin":[{"order":1,"title":"火伤的野盗","detail":"鬼蜘蛛被火烧成重伤，濒死且行动受限，作为奈落线的起点；纵火经过与具体演出待细化。"},{"order":2,"title":"洞窟中的巫女","detail":"桔梗照顾鬼蜘蛛，展现她的善意与鬼蜘蛛逐渐滋生的欲望。"},{"order":3,"title":"万妖吞噬","detail":"鬼蜘蛛让妖怪吞噬自己的身体与灵魂，奈落由此诞生；具体妖怪数量不另作游戏数值。"},{"order":4,"title":"伪装与夺玉","detail":"奈落变成犬夜叉的模样，袭击桔梗并抢夺四魂之玉，制造背叛与仇恨。"},{"order":5,"title":"封印与焚玉","detail":"为衔接后世，简述双方遭到挑拨、犬夜叉被封印，桔梗死后与玉一同火化的旧日结局。挑拨双方的具体演出后续细化。"},{"order":6,"title":"五十年后的玉碎","detail":"用剧情时间跳转承接戈薇到来、犬夜叉解封、玉重新出现及破碎；“等待玉碎”在这里表现。"},{"order":7,"title":"收集的开端","detail":"开启碎片争夺与收集目标，接上第一条线索或首次夺玉任务，再进入奈主02。具体持玉者和份额待配置。"}],"periods":["正篇1～13集","正篇14～30集","正篇31～42集","正篇43～81集","正篇82～126集","正篇127～167集","完结篇1～6集","完结篇7～15集","完结篇16～20集","完结篇21～26集素材重排"]}</script>
+  <script>
+    (() => {
+      const root = document.getElementById("shikon-story-review");
+      const data = JSON.parse(root.querySelector("#shikon-timeline-data").textContent);
+      const chart = root.querySelector(".st-chart");
+      const hero = data.routes.find(route => route.key === "hero");
+      const naraku = data.routes.find(route => route.key === "naraku");
+      const live = root.querySelector(".st-live");
+      const dataVersion = "hero-v0.1-naraku-v0.2";
+      const nGrowth = [
+        "鬼蜘蛛 → 奈落；伪装夺玉；旧日完整玉不触发胜负。",
+        "蔭刀伪装、最猛胜与琥珀续命；交易对象不自动入队。",
+        "神乐与神无正式活动；分身登场不等于自动可操作。",
+        "无双分离与回收；神乐异心；据点被破。",
+        "身体重组、新生奈落、分离赤子。",
+        "白童子、不妖璧与藏心；合成妖怪与魍魉丸。",
+        "再吸收赤子、魍魉丸；白夜登场。",
+        "面对净化与遗愿，分身控制关系继续变化。",
+        "曲灵属于玉的邪念；围绕琥珀继续争夺。",
+        "最后争夺与集齐同步；奈落胜利结局为游戏改编。"
+      ];
+      const make = (tag, className, text) => {
+        const el = document.createElement(tag);
+        if (className) el.className = className;
+        if (text !== undefined) el.textContent = text;
+        return el;
+      };
+      const phaseSide = stage => naraku.sideSeries.filter(item => {
+        const nums = (item.availability.match(/\d+/g) || []).map(Number);
+        if (!nums.length) return false;
+        const end = nums[1] || (item.availability.includes("起") ? 10 : nums[0]);
+        return stage >= nums[0] && stage <= end;
+      });
+      const sourceLabel = item => {
+        if (item.id === "奈主01") return "开篇主干已确认 · 演出待细化";
+        if (item.source.includes("结局")) return "结局改编 · 待审核";
+        if (item.source.includes("补写") || item.source.includes("原创")) return "任务补写 · 待审核";
+        return item.id.includes("支") ? "可选支线 · 待审核" : "主线事件 · 待审核";
+      };
+      const originList = beats => {
+        const list = make("ol", "st-origin");
+        beats.forEach(beat => {
+          const item = make("li");
+          item.append(make("strong", "", beat.title), make("p", "", beat.detail));
+          list.append(item);
+        });
+        return list;
+      };
+      const eventNode = (item, stage, route, side) => {
+        const listItem = make("li");
+        const details = make("details", "st-event");
+        details.id = "st-" + stage + "-" + route + "-" + item.id;
+        details.dataset.eventId = item.id;
+        const summary = make("summary", "cursor-interaction");
+        const title = item.title + (item.id === "奈主01" ? "（玉碎后接续）" : "");
+        summary.append(make("span", "st-event-id text-small", item.id), make("span", "st-event-title", title));
+        const body = make("div", "st-event-body");
+        body.append(make("p", "text-small", (side ? "支线" : "主线") + " · " + sourceLabel(item)));
+        body.append(make("p", "text-small", "动画素材：" + item.episodes));
+        if (item.availability) body.append(make("p", "text-small", "开放范围：" + item.availability));
+        body.append(make("p", "", item.detail));
+        if (item.id === "奈主01") body.append(originList(data.origin.slice(5)));
+        if (item.source) body.append(make("p", "text-small st-subtitle", "依据：" + item.source));
+        details.append(summary, body);
+        listItem.append(details);
+        return listItem;
+      };
+      const metadata = (label, text) => {
+        const line = make("p", "st-meta text-small");
+        line.append(make("span", "st-meta-label", label), document.createTextNode("　" + text));
+        return line;
+      };
+      const laneNode = (stage, key) => {
+        const source = key === "hero" ? hero : naraku;
+        const sides = key === "hero" ? stage.side : phaseSide(stage.index);
+        const lane = make("section", "st-lane " + key);
+        lane.setAttribute("aria-label", source.name + "第" + stage.index + "阶段");
+        lane.append(make("h3", "", source.name + " · " + stage.name));
+        lane.append(make("p", "st-meta", stage.goal));
+        lane.append(metadata("人物", stage.people));
+        lane.append(metadata("成长与变化", key === "hero" ? stage.growth : nGrowth[stage.index - 1]));
+        lane.append(make("div", "text-small st-subtitle", "主线 · " + stage.main.length + "篇"));
+        const list = make("ol", "st-list");
+        stage.main.forEach(item => list.append(eventNode(item, stage.index, key, false)));
+        lane.append(list);
+        if (sides.length) {
+          const details = make("details", "st-side-group");
+          details.id = "st-" + stage.index + "-" + key + "-side";
+          const cross = key === "naraku" && sides.some(item => item.availability.includes("～") || item.availability.includes("起"));
+          details.append(make("summary", "cursor-interaction", "支线 · " + sides.length + "条" + (cross ? "（含跨阶段系列）" : "")));
+          const sideList = make("ol", "st-list");
+          sides.forEach(item => sideList.append(eventNode(item, stage.index, key, true)));
+          details.append(sideList);
+          lane.append(details);
+        } else lane.append(make("p", "st-empty text-small", "本阶段未另设支线。"));
+        return lane;
+      };
+      const node = (name, subtitle, key) => {
+        const el = make("span", "st-node " + key);
+        el.append(make("span", "st-route-small text-small", key === "hero" ? "主角线" : "奈落线"));
+        el.append(make("span", "st-node-title", name), make("div", "st-node-sub text-small", subtitle));
+        return el;
+      };
+      const stageNode = (index, label, period, heroNode, narakuNode, body) => {
+        const details = make("details", "st-stage");
+        details.id = "st-phase-" + index;
+        details.dataset.stage = String(index);
+        const summary = make("summary", "st-stage-summary cursor-interaction");
+        const time = make("span", "st-time text-small");
+        const caret = make("span", "st-caret", "›");
+        caret.setAttribute("aria-hidden", "true");
+        time.append(make("span", "st-stage-number", label), make("span", "", period), caret);
+        summary.append(time, heroNode, narakuNode);
+        details.append(summary, body);
+        return details;
+      };
+      const pastBody = make("div", "st-stage-body");
+      const pastHero = make("section", "st-lane hero");
+      pastHero.setAttribute("aria-label", "主角线前史");
+      pastHero.append(make("h3", "", "主角线 · 背景回顾"));
+      pastHero.append(make("p", "", "桔梗与犬夜叉遭到离间，犬夜叉被封印；桔梗死后与玉一同焚化。"));
+      pastHero.append(make("p", "text-small st-subtitle", "在开篇或后续真相揭露中交代，不新增主角主线篇章。"));
+      const pastNaraku = make("section", "st-lane naraku");
+      pastNaraku.setAttribute("aria-label", "奈落诞生前史");
+      pastNaraku.append(make("h3", "", "奈主01 · 前史段落"), make("div", "text-small", "用户已确认主干"), originList(data.origin.slice(0, 5)));
+      pastBody.append(pastHero, pastNaraku);
+      chart.append(stageNode(0, "前史", "五十年前", node("封印前的因缘", "桔梗、犬夜叉 · 背景回顾", "hero"), node("奈主01 · 奈落诞生", "火伤 → 照顾 → 吞噬 → 伪装夺玉", "naraku"), pastBody));
+      chart.append(make("div", "st-jump text-small", "五十年后 · 戈薇到来 · 四魂之玉重现、破碎 · 正式争夺开始 ↓"));
+      hero.stages.forEach((h, index) => {
+        const n = naraku.stages[index];
+        const body = make("div", "st-stage-body");
+        body.append(laneNode(h, "hero"), laneNode(n, "naraku"));
+        const hSub = h.main[0].id + "～" + h.main[h.main.length - 1].id + " · " + h.main.length + "篇主线";
+        const nSub = n.main[0].id + "～" + n.main[n.main.length - 1].id + " · " + n.main.length + "篇主线";
+        chart.append(stageNode(index + 1, "阶段" + (index + 1), data.periods[index], node(h.name, hSub, "hero"), node(n.name, nSub, "naraku"), body));
+      });
+      const stages = [...root.querySelectorAll(".st-stage")];
+      const readState = globals => {
+        const candidate = globals?.privateContent?.shikonTimeline || globals?.shikonTimeline;
+        return candidate?.version === dataVersion ? candidate : null;
+      };
+      const restore = state => {
+        const active = state && Number.isInteger(state.stage) && state.stage >= -1 && state.stage <= 10 ? state.stage : 1;
+        const inner = new Set(Array.isArray(state?.openDetails) ? state.openDetails : []);
+        stages.forEach(stage => { stage.open = Number(stage.dataset.stage) === active; });
+        root.querySelectorAll(".st-event, .st-side-group").forEach(details => { details.open = inner.has(details.id); });
+      };
+      restore(readState(window.openai?.widgetState));
+      const save = selected => {
+        const active = stages.find(stage => stage.open);
+        const state = {
+          version: dataVersion,
+          stage: active ? Number(active.dataset.stage) : -1,
+          openDetails: [...root.querySelectorAll(".st-event[open], .st-side-group[open]")].map(el => el.id)
+        };
+        const payload = {
+          modelContent: { timeline: "犬夜叉与奈落双时间轴", stage: state.stage, selectedChapter: selected?.dataset.eventId || null, protagonistVersion: hero.version, narakuVersion: naraku.version },
+          privateContent: { shikonTimeline: state }
+        };
+        try {
+          const pending = window.openai?.setWidgetState?.(payload);
+          if (pending && typeof pending.catch === "function") pending.catch(() => {});
+        } catch (_) {}
+      };
+      root.addEventListener("click", event => {
+        const summary = event.target.closest("summary");
+        if (!summary || !root.contains(summary)) return;
+        const details = summary.parentElement;
+        if (details.tagName !== "DETAILS") return;
+        event.preventDefault();
+        const next = !details.open;
+        if (details.classList.contains("st-stage")) {
+          stages.forEach(stage => { stage.open = stage === details && next; });
+          const index = Number(details.dataset.stage);
+          live.textContent = next ? (index === 0 ? "已展开两个时间轴的五十年前背景。" : "已展开阶段" + index + "的主角线与奈落线。") : "已折叠当前阶段。";
+        } else details.open = next;
+        save(details);
+      });
+      window.addEventListener("openai:set_globals", event => {
+        const globals = event.detail?.globals;
+        if (globals && Object.prototype.hasOwnProperty.call(globals, "widgetState")) {
+          const state = readState(globals.widgetState);
+          if (state) restore(state);
+        }
+      });
+    })();
+  </script>
+</div>

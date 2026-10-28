@@ -1,0 +1,52 @@
+[
+  {
+    "id": "crawler",
+    "source": "/Users/chenghui/.codex/generated_images/01a175df-2455-7843-a442-68f563d3c9f2/exec-6c29658c-fa6d-40dd-a31d-175b105b9a9b.png",
+    "target": "assets/monsters/crawler.png"
+  },
+  {
+    "id": "maw",
+    "source": "/Users/chenghui/.codex/generated_images/01a175df-2455-7843-a442-68f563d3c9f2/exec-ca6d6d7c-1cf9-44ba-96d6-82a64523fb5e.png",
+    "target": "assets/monsters/maw.png"
+  },
+  {
+    "id": "manyeye",
+    "source": "/Users/chenghui/.codex/generated_images/01a175df-2455-7843-a442-68f563d3c9f2/exec-63002c1c-9fc2-43d7-bdec-fe9ae5ebe4f6.png",
+    "target": "assets/monsters/manyeye.png"
+  },
+  {
+    "id": "eyeball",
+    "source": "/Users/chenghui/.codex/generated_images/01a175df-2455-7843-a442-68f563d3c9f2/exec-625d4126-5c7e-48d3-93ce-def3270cb7a7.png",
+    "target": "assets/monsters/eyeball.png"
+  },
+  {
+    "id": "beetle",
+    "source": "/Users/chenghui/.codex/generated_images/01a175df-2455-7843-a442-68f563d3c9f2/exec-5ee22e88-fef9-42a6-925d-22f40e837c43.png",
+    "target": "assets/monsters/beetle.png"
+  },
+  {
+    "id": "tongue",
+    "source": "/Users/chenghui/.codex/generated_images/01a175df-2455-7843-a442-68f563d3c9f2/exec-86273257-fd12-47d0-b1b0-3353a5c1b18a.png",
+    "target": "assets/monsters/tongue.png"
+  },
+  {
+    "id": "wingface",
+    "source": "/Users/chenghui/.codex/generated_images/01a175df-2455-7843-a442-68f563d3c9f2/exec-fbe49b49-f3bf-4018-a36c-e6b5ca7279d2.png",
+    "target": "assets/monsters/wingface.png"
+  },
+  {
+    "id": "humpneck",
+    "source": "/Users/chenghui/.codex/generated_images/01a175df-2455-7843-a442-68f563d3c9f2/exec-986d021d-6c99-4809-8cf2-a408c792d361.png",
+    "target": "assets/monsters/humpneck.png"
+  },
+  {
+    "id": "cyclops",
+    "source": "/Users/chenghui/.codex/generated_images/01a175df-2455-7843-a442-68f563d3c9f2/exec-2aaef38e-e37d-4a5b-81d6-ce04bdc499b9.png",
+    "target": "assets/monsters/cyclops.png"
+  },
+  {
+    "id": "skullwhisker",
+    "source": "/Users/chenghui/.codex/generated_images/01a175df-2455-7843-a442-68f563d3c9f2/exec-84cf1c40-9130-4e20-a19a-42bb3731fb3c.png",
+    "target": "assets/monsters/skullwhisker.png"
+  }
+]

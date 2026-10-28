@@ -1,0 +1,145 @@
+/* Main campaign HUD. Resource labs retain their own layout. */
+.game-app .battle-frame { container-type: inline-size; --hud-edge: clamp(10px, 2.15cqw, 34px); --hud-gold: #d4b879; }
+.battle-frame .game-hud { top: var(--hud-edge); left: var(--hud-edge); right: var(--hud-edge); gap: 16px; }
+.battle-frame .party { display: flex; flex-direction: column; gap: clamp(9px, .85cqw, 14px); padding-top: 3px; }
+.battle-frame .party-member {
+  width: clamp(210px, 21.5cqw, 355px); min-height: clamp(70px, 5.6cqw, 94px); height: auto;
+  display: flex; align-items: center; padding: 7px 12px 7px 0; gap: 0; border: 0; border-radius: 0;
+  background: transparent; box-shadow: none; overflow: visible; color: #b39a55;
+}
+.battle-frame .party-member::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, #030b11f2, #091719ed 72%, #071114df);
+  clip-path: polygon(3.4% 0, 92.4% 0, 100% 28%, 100% 86%, 96.6% 100%, 0 100%, 0 13%);
+}
+.battle-frame .action-tile::after {
+  content: ''; position: absolute; inset: 4px; border-top: 1px solid #d6bc7530; border-bottom: 1px solid #d6bc751b;
+  pointer-events: none; border-radius: inherit;
+}
+.battle-frame .party-member.active { color: #d8b85f; box-shadow: none; }
+.battle-frame .party-member:not(.active) { width: clamp(210px, 21.5cqw, 355px); min-height: clamp(64px, 5cqw, 84px); padding-block: 5px; }
+.member-frame { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; fill: none; stroke: currentColor; stroke-width: 1; }
+.member-frame path { vector-effect: non-scaling-stroke; }.member-frame .frame-inner { opacity: .35; }.member-frame .frame-corners { opacity: .8; }
+.battle-frame .member-portrait { position: absolute; left: 3%; bottom: 4px; width: 31%; z-index: 1; pointer-events: none; }
+.battle-frame .party-member:not(.active) .member-portrait { width: 28%; }
+.battle-frame .party-member canvas, .battle-frame .party-member:not(.active) canvas { display: block; width: 100%; height: auto; background: none; image-rendering: pixelated; }
+.battle-frame .member-key { top: 43%; left: -7px; z-index: 3; display: grid; place-items: center; width: clamp(19px, 1.55cqw, 26px); height: clamp(19px, 1.55cqw, 26px); min-width: 0; padding: 0; transform: translateY(-50%) rotate(45deg); color: #f5e8b6; background: #030c13; border: 1px solid currentColor; border-radius: 0; font: clamp(12px, 1.15cqw, 19px)/1 Georgia, serif; }
+.battle-frame .member-key b { transform: rotate(-45deg); font: inherit; }
+.battle-frame .member-info { --vital-value-width: clamp(53px, 4.3cqw, 72px); flex: 1; display: flex; flex-direction: column; gap: 4px; position: relative; z-index: 2; margin-left: 36%; }
+.battle-frame .member-heading { display: flex; justify-content: flex-start; align-items: center; gap: clamp(8px, 2cqw, 33px); margin: 0 0 2px; }
+.battle-frame .member-info strong { font: 500 clamp(15px, 1.43cqw, 24px)/1.15 var(--serif); color: #f5e8bd; letter-spacing: .1em; }
+.battle-frame .party-member:not(.active) .member-info { gap: 3px; }.battle-frame .party-member:not(.active) .member-heading { margin-bottom: 0; }.battle-frame .party-member:not(.active) .member-info strong { font-size: clamp(14px, 1.26cqw, 21px); }
+.battle-frame .member-info .member-state { display: inline-block; font: 10px/1.3 var(--serif); color: #d6bd7d; margin: 0; padding: 1px 5px; border: 1px solid #b7964f66; border-radius: 0; }
+.battle-frame .active .member-state { color: #f5d795; border-color: #d4b87999; }.battle-frame .active .member-state::after { content: ' ›'; }
+.battle-frame .party-member:not(.active):not(.locked):not(.is-dead) .member-state { display: none; }
+.battle-frame .member-vital { display: grid; grid-template-columns: minmax(26px, 1fr) var(--vital-value-width); gap: 6px; align-items: center; font-size: clamp(11px, .95cqw, 16px); line-height: 1.15; }
+.battle-frame .party-member:not(.active) .member-vital { font-size: clamp(10px, .85cqw, 14px); }
+.battle-frame .health-vital .vital-label { display: none; }.battle-frame .energy-vital { grid-template-columns: 24px minmax(16px, 1fr) var(--vital-value-width); gap: 5px; }
+.battle-frame .vital-label { color: #c2c9bc; font-size: clamp(10px, .9cqw, 15px); }
+.battle-frame .member-hp, .battle-frame .member-energy-value { color: #eadfc6; font: inherit; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.battle-frame .member-health, .battle-frame .member-energy { display: block; height: clamp(10px, .95cqw, 16px); padding: 2px; margin: 0; border: 1px solid #bda259b3; background: #050e16; border-radius: 1px; overflow: hidden; box-shadow: inset 0 0 0 1px #000; }
+.battle-frame .member-health i { display: block; height: 100%; background: linear-gradient(#bbd392, #8aa87d); transition: width .12s; }
+.battle-frame .party-member[data-hero="inuyasha"] .member-health i { background: linear-gradient(#f28b79, #ca4f49); }
+.battle-frame .member-energy { height: clamp(8px, .8cqw, 13px); padding: 1px; }
+.battle-frame .member-energy i { display: block; height: 100%; background: #b39bdd; }
+.battle-frame .energy-vital .vital-label { color: #c7afe7; }
+.battle-frame .party-member[data-hero="kagome"] .member-energy i { background: #72c9df; }
+.battle-frame .party-member[data-hero="kagome"] .energy-vital .vital-label { color: #8dd5e7; }
+.battle-frame .member-energy.is-unset { border-style: dashed; background: repeating-linear-gradient(115deg, #c2a7dd12 0 4px, #080f1a 4px 8px); }
+.battle-frame .member-energy.is-unset + .member-energy-value { color: #a3aaa4; }
+.battle-frame .member-effects { font-size: 10px; color: #dabbed; line-height: 1.4; white-space: normal; }
+.battle-frame .party-member.low-health .member-hp { color: #ffb3a2; }
+.battle-frame .party-member.low-health .member-state { color: #ffb3a2; border-color: #dd897f66; }
+.battle-frame .party-member.is-dead { filter: grayscale(.8); opacity: .65; }
+.battle-frame .party-member.locked { opacity: .5; }
+.battle-frame .hud-corner { display: flex; flex-direction: column; align-items: flex-end; margin-left: auto; width: clamp(180px, 16cqw, 264px); gap: 10px; }
+.battle-tools { display: flex; justify-content: flex-end; gap: clamp(5px, .65cqw, 11px); }
+.battle-tool { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 4px; color: #ead7a9; text-shadow: 0 2px 3px #000; border: 1px solid #b89f6052; background: #0a1921b3; border-radius: 4px; }
+.battle-tool .ui-icon { width: 22px; height: 22px; }.battle-tool>span[aria-hidden] { font-size: 21px; line-height: 1; }.battle-tool small { font-size: 9px; line-height: 1.4; }
+.battle-frame .objective { width: 100%; min-width: 0; max-width: none; padding: clamp(8px, .8cqw, 13px); margin: 0; border: 1px solid #b29a5c66; border-radius: 2px 10px 2px 10px; background: #0a1b22dc; }
+.battle-frame .objective small { font: clamp(10px, .9cqw, 14px)/1.5 var(--serif); color: #d4c39a; letter-spacing: .06em; margin-bottom: 6px; }
+.battle-frame .objective strong { display: block; font: 500 clamp(12px, 1.16cqw, 19px)/1.5 var(--serif); color: #f0d79c; letter-spacing: .03em; overflow-wrap: anywhere; }
+.hud-relics { display: block; color: #d7d5bd; font-size: clamp(10px, .85cqw, 14px); margin-top: 7px; }
+.battle-frame .journey-track { margin-top: 8px; height: 2px; }
+.battle-frame .boss-hud { top: var(--hud-edge); left: 50%; right: auto; width: 32.5%; transform: translateX(-50%); }
+.battle-frame .boss-hud>div:first-child { align-items: baseline; gap: 10px; font: 500 clamp(15px, 1.65cqw, 27px)/1.4 var(--serif); color: #f0e2b5; }
+.battle-frame .boss-hud small { font: clamp(10px, .85cqw, 14px)/1.4 var(--sans); color: #d7c7c1; text-align: right; }
+.battle-frame .boss-track { height: clamp(7px, .75cqw, 12px); border-color: #d4b879a3; margin-top: 6px; background: #1b1720e8; }
+.battle-frame .boss-track i { background: linear-gradient(#ef667b, #b73551); }
+.battle-frame .combat-bottom { top: 0; bottom: 0; left: var(--hud-edge); right: var(--hud-edge); gap: 24px; pointer-events: none; }
+.battle-frame .combat-bottom button { pointer-events: auto; }
+.hud-jewel { display: flex; align-items: center; gap: 12px; width: clamp(175px, 19cqw, 314px); margin-right: auto; margin-bottom: clamp(12px, 1.3cqw, 22px); padding: 10px 12px; text-align: left; border: 1px solid #c5a86788; border-radius: 9px 2px; background: linear-gradient(115deg, #07131cef, #102123db); }
+.jewel-symbol { width: clamp(27px, 2.7cqw, 44px); height: clamp(39px, 4.3cqw, 65px); flex-shrink: 0; filter: drop-shadow(0 0 8px #9f8ace3b); }
+.jewel-copy { flex: 1; min-width: 0; }.jewel-copy strong { display: block; font: 500 clamp(13px, 1.18cqw, 19px)/1.5 var(--serif); color: #ebdcb3; letter-spacing: .08em; }
+#hud-jewel-shares { display: block; font-size: clamp(10px, .87cqw, 14px); color: #dcd3b8; white-space: nowrap; }
+.hud-jewel-track { display: block; height: 5px; padding: 1px; border: 1px solid #a8946466; margin: 6px 0; background: #040e18; }.hud-jewel-track i { display: block; height: 100%; background: #8ec8db; }
+.action-cluster { position: absolute; top: calc(var(--road-bottom) + clamp(4px, .5cqw, 8px)); right: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.battle-frame .skill-bar { gap: clamp(5px, .5cqw, 8px); }
+.battle-frame .action-tile { position: relative; width: clamp(54px, 5cqw, 82px); height: clamp(48px, 4.8cqw, 79px); min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 0; padding: 4px 3px; border: 1px solid #c2a46899; border-radius: 8px 2px; background: linear-gradient(145deg, #0c2029ed, #06151af5); color: #ead7ab; touch-action: none; user-select: none; }
+.battle-frame .action-tile>kbd { position: absolute; left: 4px; top: 3px; z-index: 2; padding: 1px 3px; min-width: 14px; font-size: 9px; border-color: #c6b17980; color: #f0ddac; background: #0c1821; }
+.action-icon { position: relative; display: grid; place-items: center; width: 100%; flex: 1; min-height: 22px; padding-left: 8px; }
+.action-vector { width: clamp(22px, 2.5cqw, 40px); height: clamp(22px, 2.5cqw, 40px); display: block; filter: drop-shadow(0 0 3px #e6c77b0d); }
+.skill-icon { display: grid; place-items: center; }
+.battle-frame[data-active-hero="inuyasha"] .skill-icon { color: #e98c7a; }.battle-frame[data-active-hero="kagome"] .skill-icon { color: #a1dfe1; }
+.battle-frame .skill-name { font: clamp(10px, .9cqw, 14px)/1.6 var(--serif); letter-spacing: .02em; color: #f0e4c5; white-space: nowrap; position: relative; z-index: 2; }
+.battle-frame .cooldown { display: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -45%); width: clamp(24px, 2.7cqw, 43px); aspect-ratio: 1; border-radius: 50%; background: conic-gradient(#e5d3a5 calc(var(--cooldown) * 1turn), #b9b7a329 0); color: #ffedc7; font: 500 clamp(10px, .95cqw, 15px)/1 Georgia, serif; z-index: 1; }
+.battle-frame .cooldown::before { content: ''; position: absolute; inset: 3px; border-radius: inherit; background: #0a1720ed; }
+.cooldown-value { position: relative; z-index: 1; font: inherit; }.battle-frame .skill-button.cooling .cooldown { display: grid; place-items: center; }
+.cooling .skill-icon { opacity: .35; }.battle-frame .action-tile:active { background: #375044ed; }
+.battle-frame .combat-hint { display: flex; align-items: center; gap: 14px; padding: 0; background: none; color: #d2cbb3; font-size: clamp(10px, .85cqw, 13px); text-shadow: 0 1px 4px #000; letter-spacing: 0; pointer-events: auto; }
+.battle-frame .combat-hint button { padding: 0 3px; color: inherit; min-height: 22px; }.battle-frame .combat-hint kbd { font-size: inherit; margin: 0 4px 0 0; padding: 2px 5px; border-color: #c2a46888; background: #0b1920ce; }
+.scene-interaction { position: absolute; transform: translate(-50%, -100%); z-index: 2; display: flex; align-items: center; gap: 8px; padding: 7px 12px; min-height: 44px; max-width: 60%; border: 1px solid #d6bc7a99; border-radius: 3px; background: #0d2529ed; color: #f0dfb4; font-size: clamp(12px, 1cqw, 16px); text-align: center; }
+.battle-frame .dialogue { min-height: 120px; bottom: 4%; padding: clamp(13px, 1.4cqw, 23px); gap: clamp(12px, 1.3cqw, 20px); border-color: #c9ab6d99; background: linear-gradient(100deg, #0b2126fa, #13282bf5); }
+.battle-frame .dialogue-portrait { width: clamp(46px, 6cqw, 94px); }.battle-frame .dialogue-portrait canvas { width: 100%; height: auto; }
+.battle-frame .dialogue-heading strong { font-size: clamp(15px, 1.45cqw, 23px); }.battle-frame .dialogue-heading small { font-size: 12px; }
+.battle-frame .dialogue p { font-size: clamp(13px, 1.15cqw, 18px); line-height: 1.9; min-height: 0; margin: 9px 0; }
+.battle-frame .dialogue button { font-size: 12px; min-height: 36px; }.battle-frame .dialogue button kbd { font-size: 11px; }
+.battle-frame.is-dialogue .party { opacity: .65; }.battle-frame.is-dialogue #pause-button { visibility: hidden; }
+.game-app .app-shell.playing .toast { top: 19%; max-width: 62%; font-size: 13px; }
+.battle-frame .touch-controls { top: calc(var(--road-bottom) + clamp(4px, .5cqw, 8px)); bottom: auto; left: 12px; right: 12px; align-items: flex-start; pointer-events: none; gap: 18px; }
+.battle-frame .touch-controls>div { gap: 7px; pointer-events: auto; }.battle-frame .touch-controls .touch-actions { display: flex; }
+.battle-frame .touch-controls button { width: 44px; height: 44px; padding: 3px; font-size: 11px; border-color: #d3b77688; background: #10262be0; }.battle-frame .touch-directions button { font-size: 18px; }
+.battle-frame .touch-actions button { border-radius: 6px 2px; }.battle-frame .touch-actions [data-input="attack"] { background: #877244d9; color: #fff1cb; }
+.touch-mode .action-cluster { display: none; }.touch-mode .combat-bottom { inset: 0; pointer-events: none; }.touch-mode .hud-jewel { position: absolute; right: var(--hud-edge); top: clamp(125px, 16cqw, 175px); padding: 5px 8px; width: auto; border: 0; background: #0b1c24b3; }.touch-mode .jewel-symbol, .touch-mode .hud-jewel-track, .touch-mode .jewel-copy strong { display: none; }
+.touch-mode .scene-interaction kbd { display: none; }
+.game-app dialog.journey-panel[open] { display: flex; flex-direction: column; width: min(1120px, 94vw); max-height: 88dvh; padding: 24px 32px; border-color: #c8ab6f88; border-radius: 3px; background: linear-gradient(125deg, #0b2225f5, #0b1d22f5); }
+.journey-panel .panel-top { flex-shrink: 0; margin-bottom: 0; border: 0; padding-bottom: 14px; }.journey-panel .panel-top h2 { font-size: 34px; }.journey-panel .panel-top small { color: #d6bd86; font-size: 11px; letter-spacing: .1em; }
+.journal-tabs { display: flex; flex-shrink: 0; border-bottom: 1px solid #c6a66666; margin-bottom: 22px; gap: 10px; overflow-x: auto; }
+.journal-tabs button { flex: 1; min-width: max-content; min-height: 44px; padding: 10px 14px; color: #aebfb5; border-bottom: 2px solid transparent; font: 17px/1.5 var(--serif); letter-spacing: .08em; }
+.journal-tabs [aria-selected="true"] { color: #f0d393; border-color: #dfc486; background: linear-gradient(0deg, #c7b36a0a, transparent); }
+.journey-panel #panel-content { overflow: auto; min-height: 0; overscroll-behavior: contain; padding: 0 4px; }
+.journal-footer { display: flex; align-items: center; gap: 14px; border-top: 1px solid #baa66944; margin-top: 20px; padding-top: 16px; flex-shrink: 0; }.journal-footer .button { min-height: 44px; }.journal-home { margin-left: auto; padding: 12px 0 12px 14px; font-size: 13px; color: #d4c8a4; }
+.journey-overview { display: grid; grid-template-columns: 1.6fr 1fr; gap: 34px; padding: 12px 0 4px; }.journey-current>small, .journey-goal small { color: #a8b8ac; font-size: 13px; }.journey-current h3 { margin: 13px 0; font: 30px/1.5 var(--serif); color: #f0e6c8; letter-spacing: .06em; }.journey-scene { margin: 0 0 24px; font-size: 16px; color: #c7d0c1; }.journey-goal { padding: 22px 0; border-top: 1px solid #c6ad6b4a; }.journey-goal small { display: block; color: #d6bd83; }.journey-goal strong { display: block; font: 26px/1.7 var(--serif); margin-top: 10px; color: #f5e4b9; }
+.checkpoint-summary { display: flex; gap: 16px; align-items: center; border: 1px solid #ad976b5c; padding: 15px; background: #07181a88; }.checkpoint-summary>span { color: #d8c18e; font-size: 30px; }.checkpoint-summary strong { font: 14px/1.5 var(--serif); color: #e0c58c; }.checkpoint-summary p { font-size: 12px; color: #c5ccb9; margin: 6px 0 0; }.checkpoint-summary>small { margin-left: auto; font-size: 11px; color: #8daba2; }
+.journey-details { border-left: 1px solid #c3ab6a4d; padding-left: 30px; }.journey-details h3 { font: 20px/1.5 var(--serif); color: #dbc68e; margin: 0 0 16px; }.journey-details .jewel-comparison { margin: 16px 0; gap: 18px; }.journey-details .settings-note { margin-bottom: 28px; }.journey-details .jewel-row { font-size: 13px; }.journey-details .jewel-track { height: 6px; }
+.journey-relics { display: flex; align-items: center; gap: 25px; color: #e2c68b; }.journey-relics span { letter-spacing: .25em; font-size: 28px; }.journey-relics strong { font: 28px/1.5 Georgia, serif; white-space: nowrap; }
+@media (max-width: 1000px) {
+  .battle-frame .member-vital { gap: 4px; }.battle-frame .energy-vital { grid-template-columns: 22px minmax(12px, 1fr) var(--vital-value-width); gap: 3px; }.battle-frame .member-info { gap: 4px; }.battle-frame .party-member { padding-right: 9px; }
+  .battle-frame .hud-corner { width: 170px; gap: 6px; }.battle-frame .boss-hud { width: 31%; }.battle-frame .boss-hud>div:first-child { display: block; }.battle-frame .boss-hud small { display: block; text-align: left; margin-top: 3px; }
+  .battle-frame .hud-jewel { gap: 7px; padding: 7px 9px; }.battle-frame .action-cluster { flex-direction: row; align-items: center; gap: 10px; }.battle-frame .combat-hint { order: -1; gap: 7px; }
+}
+@media (max-height: 560px) and (min-aspect-ratio: 4/5) {
+  .battle-frame .party-member { min-height: 62px; padding-block: 5px; }.battle-frame .party-member:not(.active) { min-height: 58px; }.battle-frame .member-info .member-state { font-size: 9px; padding: 1px 4px; }.battle-frame .member-heading { margin: 0; }.battle-frame .member-info { gap: 3px; }.battle-frame .member-health { height: 10px; }.battle-frame .member-energy { height: 8px; }
+  .battle-frame .battle-tool { width: 40px; height: 44px; border-color: #d1b87833; }.battle-frame .objective { padding: 6px 8px; }.battle-frame .objective small { margin-bottom: 3px; }.battle-frame .hud-relics { margin-top: 4px; }.battle-frame .boss-hud>div:first-child { font-size: 14px; }.battle-frame .boss-hud small { font-size: 10px; }
+  .game-app dialog.journey-panel[open] { padding: 14px 22px; max-height: 94dvh; }.journey-panel .panel-top h2 { font-size: 25px; margin-top: 5px; }.journey-panel .panel-top { padding-bottom: 7px; }.journal-tabs { margin-bottom: 12px; }.journal-tabs button { padding: 6px 12px; min-height: 36px; font-size: 14px; }.journal-footer { margin-top: 10px; padding-top: 10px; }
+}
+@media (max-aspect-ratio: 4/5) {
+  .game-app .battle-frame { top: clamp(205px, 27dvh, 270px); transform: translateX(-50%); overflow: visible; }
+  .battle-frame .game-hud { top: -190px; left: 12px; right: 12px; }.battle-frame .party { flex-direction: row; width: 100%; gap: 10px; padding-top: 3px; }.battle-frame .party-member, .battle-frame .party-member:not(.active) { flex: 1; min-width: 0; width: calc(50% - 5px); min-height: 85px; padding: 8px 7px 8px 0; gap: 0; }.battle-frame .member-portrait, .battle-frame .party-member:not(.active) .member-portrait { width: 31%; left: 2%; bottom: 12px; }.battle-frame .member-info { --vital-value-width: 47px; gap: 5px; margin-left: 34%; }.battle-frame .member-heading { gap: 5px; flex-wrap: wrap; }.battle-frame .member-info strong { font-size: 14px; }.battle-frame .member-info .member-state { padding: 1px 3px; font-size: 9px; }.battle-frame .member-vital { grid-template-columns: minmax(9px, 1fr) var(--vital-value-width); gap: 3px; font-size: 10px; }.battle-frame .energy-vital { grid-template-columns: 20px minmax(8px, 1fr) var(--vital-value-width); gap: 2px; }.battle-frame .vital-label { font-size: 10px; }.battle-frame .member-key { width: 17px; height: 17px; left: -5px; font-size: 11px; }.battle-frame .member-health { height: 9px; padding: 1px; }.battle-frame .member-energy { height: 7px; }.battle-frame .member-effects { font-size: 9px; }
+  .battle-frame .hud-corner { position: absolute; top: 105px; left: 0; right: 0; width: auto; display: block; }.battle-frame .battle-tools { float: right; gap: 4px; }.battle-frame .battle-tool { width: 40px; height: 44px; }.battle-frame .objective { width: calc(100% - 137px); padding: 7px 9px; }.battle-frame .objective strong { font-size: 12px; }.battle-frame .objective small { font-size: 10px; margin-bottom: 3px; }.battle-frame .hud-relics { display: inline; font-size: 10px; }.battle-frame .journey-track { margin-top: 4px; }
+  .battle-frame .boss-hud { top: 7px; width: 60%; }.battle-frame .boss-hud>div:first-child { font-size: 14px; display: flex; }.battle-frame .boss-hud small { font-size: 9px; max-width: 55%; text-align: right; margin-top: 0; }.battle-frame .boss-track { height: 5px; margin-top: 3px; }
+  .battle-frame .combat-bottom, .touch-mode .combat-bottom { inset: auto 14px auto; top: calc(100% + 20px); display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }.battle-frame .hud-jewel, .touch-mode .hud-jewel { position: static; width: 175px; padding: 7px 9px; background: #102225e6; border: 1px solid #b69e6266; }.touch-mode .jewel-copy strong { display: block; }.touch-mode .jewel-symbol { display: block; }.battle-frame .jewel-symbol { height: 35px; width: 23px; }.battle-frame .jewel-copy strong { font-size: 13px; }.battle-frame #hud-jewel-shares { font-size: 10px; }
+  .battle-frame .action-cluster { position: static; align-self: flex-end; flex-direction: column; align-items: flex-end; gap: 4px; }.battle-frame .combat-hint { order: 0; }.battle-frame .action-tile { width: 54px; height: 58px; }.battle-frame .skill-name { font-size: 11px; }.battle-frame .action-vector { width: 24px; height: 24px; }.battle-frame .cooldown { width: 27px; font-size: 11px; }.battle-frame .touch-controls { bottom: auto; top: calc(100% + 112px); left: 12px; right: 12px; }.battle-frame .touch-controls>div { gap: 6px; }.battle-frame .touch-controls .touch-actions { display: grid; grid-template-columns: repeat(3, 44px); }.battle-frame .hud-jewel { margin-bottom: 0; }
+  .battle-frame .dialogue { top: calc(100% + 22px); bottom: auto; left: 12px; right: 12px; min-height: 175px; padding: 14px; gap: 10px; }.battle-frame .dialogue-portrait { width: 43px; }.battle-frame .dialogue p { font-size: 14px; line-height: 1.8; }.battle-frame .dialogue button { min-height: 44px; }
+  .game-app .app-shell.playing .toast { top: 20%; max-width: 90%; font-size: 12px; }
+  .game-app dialog.journey-panel[open] { padding: 20px 16px; max-height: 92dvh; }.journey-panel .panel-top h2 { font-size: 28px; }.journal-tabs { gap: 0; margin-bottom: 16px; }.journal-tabs button { min-width: max-content; flex: 0 0 auto; font-size: 14px; padding: 9px 13px; }.journey-overview { grid-template-columns: 1fr; gap: 26px; }.journey-current h3 { font-size: 23px; }.journey-scene { font-size: 14px; }.journey-goal strong { font-size: 22px; }.journey-details { border-left: 0; border-top: 1px solid #bba36244; padding: 20px 0 0; }.journey-details .settings-note { margin-bottom: 20px; }.journal-footer { flex-wrap: wrap; gap: 8px; }.journal-footer .button { padding: 10px 12px; font-size: 11px; letter-spacing: .04em; }.journal-home { margin: 0; padding: 8px 5px; font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .battle-frame .member-health i, .battle-frame .boss-track i { transition: none; } }
+/* Preserve readable touch labels and the existing objective/jewel separation. */
+.battle-frame .touch-controls .touch-actions button { font-size: 10px; padding: 2px 1px; white-space: nowrap; letter-spacing: 0; }
+.touch-mode .combat-bottom { bottom: 0; }
+.touch-mode .hud-jewel { top: calc(var(--hud-edge) + 60px + var(--objective-height, 80px)); }
+@media (max-aspect-ratio: 4/5) {
+  .battle-frame .member-vital { font-size: 10px; }.battle-frame .vital-label { font-size: 10px; }
+  .battle-frame .combat-bottom, .touch-mode .combat-bottom { bottom: auto; }
+}

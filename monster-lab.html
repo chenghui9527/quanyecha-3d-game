@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>犬夜叉招式与妖怪 · 开发验证场</title><link rel="stylesheet" href="./styles.css">
+  <style>
+    .lab-shell{max-width:1150px;margin:auto;padding:28px 24px}.lab-heading{display:flex;justify-content:space-between;align-items:center;gap:20px}.lab-heading h1{font:30px var(--serif);letter-spacing:4px;margin:0}.lab-heading a{color:var(--gold);font-size:12px}.lab-intro{font-size:12px;line-height:1.9;color:var(--muted);margin:16px 0}.lab-controls{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0;align-items:center}.lab-controls select{background:#1d2c2b;border:1px solid #a0ac8055;color:var(--text);padding:11px;font:12px var(--sans)}.lab-controls label{font-size:11px;color:var(--muted)}.lab-controls .button{font-size:11px;min-height:36px;padding:10px 14px;letter-spacing:1px}.lab-stage{width:min(100%,calc((100dvh - 360px) * 1.77778));margin:auto;aspect-ratio:16/9;border:1px solid #d6b88755}.lab-stage canvas{width:100%;height:100%;display:block;image-rendering:pixelated}.lab-status{font-size:12px;color:var(--gold);min-height:36px;line-height:1.9;margin:16px 0}.lab-species{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px;margin-top:20px}.lab-species article{padding:12px;background:#1c2d2b;border:1px solid #b3b18233}.lab-species canvas{width:100%;height:100px;object-fit:contain;image-rendering:pixelated}.lab-species h2{font:19px var(--serif);letter-spacing:2px;margin:10px 0}.lab-species p{color:var(--muted);font-size:10px;line-height:1.8}@media(max-width:720px){.lab-species{grid-template-columns:1fr 1fr}.lab-heading h1{font-size:23px}.lab-shell{padding:20px 14px}}
+  </style>
+</head>
+<body><main class="lab-shell">
+  <div class="lab-heading"><h1>犬夜叉招式 · 验证场</h1><a href="./index.html">返回主线 →</a></div>
+  <p class="lab-intro">切换妖怪组合或数量立即生效。点击下方招式，用当前所选妖怪的耐打目标预览命中细节；点击“开始 / 重置”可按正常生命值自由实战。“动作练习”始终使用耐打目标。预览目标不会主动进攻，本页不读写主线进度。<br>A / D 移动，空格跳跃，J 连续爪击，S / ↓＋J 地面上挑 / 空中下砸，空中 J 追打，K 闪避，U 散魂铁爪，I 飞刃血爪，Tab 切换，Esc 暂停。</p>
+  <div class="lab-controls"><select id="lab-species" aria-label="验证组合"></select><select id="lab-count" aria-label="怪物数量"><option value="1">单只</option><option value="3">3只</option><option value="5">5只</option></select><button class="button primary" id="lab-reset">开始 / 重置</button><button class="button secondary" id="lab-hero">切换角色</button><button class="button secondary" id="lab-heal">恢复队伍</button><label><input type="checkbox" id="lab-hitboxes"> 显示碰撞范围</label></div>
+  <div class="lab-controls" aria-label="犬夜叉招式预览"><button class="button secondary" data-lab-move="combo">三段普攻</button><button class="button secondary" data-lab-move="upper">上挑</button><button class="button secondary" data-lab-move="air1">空中追打</button><button class="button secondary" data-lab-move="plunge">下砸</button><button class="button secondary" data-lab-move="scatter">散魂铁爪</button><button class="button secondary" data-lab-move="blood">飞刃血爪</button><button class="button primary" data-lab-move="chain">连招演示</button><label><input type="checkbox" id="lab-slow"> 慢动作 ×0.25</label><label><input type="checkbox" id="lab-freeze"> 出手定格 · Esc继续</label></div>
+  <div class="lab-stage"><canvas id="lab-game" width="960" height="540" tabindex="0" aria-label="怪物战斗验证画面"></canvas></div>
+  <p class="lab-status" id="lab-status" role="status"></p><section class="lab-species" id="lab-catalog" aria-label="十五种怪物造型对比"></section>
+</main><script type="module" src="./src/monster-lab.js"></script></body></html>

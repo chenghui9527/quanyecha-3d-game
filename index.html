@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#071a21">
+  <meta name="description" content="犬夜叉主题精细像素风横版动作冒险。穿过食骨之井，与犬夜叉和戈薇一同踏上寻找四魂之玉的旅途。">
+  <title>犬夜叉 · 四魂初旅</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23131f20'/%3E%3Cpath d='M32 8 50 32 32 56 14 32Z' fill='%23d9b985'/%3E%3Cpath d='M32 18 41 32 32 46 23 32Z' fill='%237ca891'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./home.css">
+  <link rel="stylesheet" href="./factions.css">
+  <link rel="stylesheet" href="./battle.css">
+</head>
+<body class="game-app">
+  <div class="app-shell" id="app-shell">
+    <main class="game-stage" id="stage" aria-label="游戏场景">
+      <section class="home-screen" id="home-screen" aria-label="四魂初旅主菜单">
+        <div class="home-shade" aria-hidden="true"></div>
+        <div class="home-atmosphere" aria-hidden="true">
+          <i style="--x:5%;--y:57%;--delay:-2s"></i><i style="--x:17%;--y:78%;--delay:-6s"></i>
+          <i style="--x:30%;--y:69%;--delay:-4s"></i><i style="--x:42%;--y:42%;--delay:-9s"></i>
+          <i style="--x:55%;--y:80%;--delay:-1s"></i><i style="--x:66%;--y:32%;--delay:-7s"></i>
+          <i style="--x:77%;--y:78%;--delay:-5s"></i><i style="--x:92%;--y:59%;--delay:-3s"></i>
+          <span class="forest-leaf" style="--x:48%;--delay:-3s"></span><span class="forest-leaf" style="--x:83%;--delay:-9s"></span>
+        </div>
+        <nav class="screen-tools" aria-label="显示、声音与设置">
+          <button class="screen-tool" id="fullscreen-button" data-fullscreen-toggle aria-label="进入全屏" aria-pressed="false"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M8 8 3 3m13 5 5-5M8 16l-5 5m13-5 5 5"/></svg><span class="fullscreen-label">全屏</span></button>
+          <button class="screen-tool" id="sound-button" data-sound-toggle aria-label="关闭声音" aria-pressed="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h4l5-5v16l-5-5H3Z"/><g class="sound-waves"><path d="M16 7a7 7 0 0 1 0 10m3-13a11 11 0 0 1 0 16"/></g><path class="sound-muted-mark" d="m16 9 6 6m0-6-6 6"/></svg><span class="sound-label">声音</span></button>
+          <button class="screen-tool" id="help-button"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 3-1 3-3 1-2 3 2 2-1 3 3 2 1 3h4l2-2 3 1 2-3 2-1-1-4-2-1-1-3-3-1-1-3Z"/><circle cx="11.8" cy="11.8" r="3.3"/></svg><span>设置</span></button>
+        </nav>
+        <div class="home-copy">
+          <h1 class="title-logo"><span class="sr-only">犬夜叉 · 四魂初旅</span></h1>
+          <div class="title-rule" aria-hidden="true"><span>◇</span></div>
+          <p class="home-subtitle">穿过食骨之井，赴一场五百年的约定。</p>
+          <nav class="home-menu" aria-label="开始或继续旅程">
+            <button class="home-menu-item is-selected" id="play-button"><span id="play-label">开始旅程</span></button>
+            <button class="home-menu-item" id="new-game-button" hidden>新的旅程</button>
+            <button class="home-menu-item" id="chapter-button">选择章节</button>
+          </nav>
+        </div>
+        <nav class="home-links" aria-label="旅程档案">
+          <button id="nav-heroes"><svg class="ui-icon" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="8" r="4"/><path d="M5 25v-3a9 9 0 0 1 18 0v3ZM6 6a4 4 0 0 0-1 7m-1 3a7 7 0 0 0-3 6v2h4M22 6a4 4 0 0 1 1 7m1 3a7 7 0 0 1 3 6v2h-4"/></svg><span>伙伴</span></button>
+          <button id="nav-jewel"><svg class="ui-icon" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="11"/><path d="m14 7 5 7-5 7-5-7Zm-5-5 2 4m10-1-3 3M4 12l4 1"/></svg><span>四魂之玉</span></button>
+          <button id="nav-bestiary"><svg class="ui-icon" viewBox="0 0 28 28" aria-hidden="true"><path d="m5 9-1-6 7 4m12 2 1-6-7 4M4 12a10 10 0 0 1 20 0v6l-5 7H9l-5-7Zm3 2 4 2m10-2-4 2m-6 5 3-2 3 2"/></svg><span>妖怪图鉴</span></button>
+        </nav>
+        <div class="home-caption"><span>第一阶段 · 玉碎与启程</span><i aria-hidden="true"></i></div>
+        <p class="home-save-status" id="save-status">进度自动保存</p>
+      </section>
+      <section class="faction-screen" id="faction-screen" aria-labelledby="faction-heading" hidden>
+        <header class="faction-header">
+          <button class="faction-back" id="faction-back"><span aria-hidden="true">‹</span> 返回主界面</button>
+          <div class="faction-heading-group"><h2 id="faction-heading">选择你的阵营</h2><p>同一颗四魂之玉，两条不同的旅途。</p></div>
+          <button class="screen-tool faction-sound" data-sound-toggle aria-label="关闭声音" aria-pressed="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h4l5-5v16l-5-5H3Z"/><g class="sound-waves"><path d="M16 7a7 7 0 0 1 0 10m3-13a11 11 0 0 1 0 16"/></g><path class="sound-muted-mark" d="m16 9 6 6m0-6-6 6"/></svg><span class="sound-label sr-only">声音</span></button>
+        </header>
+        <div class="faction-options" role="radiogroup" aria-label="旅程所属阵营">
+          <button class="faction-card is-selected" id="faction-inuyasha" data-faction="inuyasha" role="radio" aria-checked="true" aria-describedby="faction-inuyasha-description" tabindex="0">
+            <span class="faction-art" aria-hidden="true"></span>
+            <span class="faction-status"><span aria-hidden="true">◇</span> 已开放 · 前三篇</span>
+            <span class="faction-selected-mark" aria-hidden="true">◆</span>
+            <span class="faction-caption"><span class="faction-name">犬夜叉阵营</span><span class="faction-description" id="faction-inuyasha-description">守护同伴，踏上寻玉之旅。</span><span class="faction-opening">开篇：封印与玉碎</span></span>
+          </button>
+          <span class="faction-divider" aria-hidden="true"><i></i><span>◇</span><i></i></span>
+          <button class="faction-card faction-naraku" id="faction-naraku" data-faction="naraku" role="radio" aria-checked="false" aria-describedby="faction-naraku-description" tabindex="-1">
+            <span class="faction-art" aria-hidden="true"></span>
+            <span class="faction-status"><span aria-hidden="true">◇</span> 筹备中</span>
+            <span class="faction-selected-mark" aria-hidden="true">◆</span>
+            <span class="faction-caption"><span class="faction-name">奈落阵营</span><span class="faction-description" id="faction-naraku-description">从鬼蜘蛛的旧事，走向夺玉之局。</span><span class="faction-opening">开篇：奈落诞生</span></span>
+          </button>
+        </div>
+        <footer class="faction-actions"><button class="faction-start" id="faction-start">开启犬夜叉篇 <span aria-hidden="true">→</span></button><p id="faction-note" role="status" aria-live="polite">阵营将在本次旅程中固定。</p></footer>
+      </section>
+      <div class="battle-frame" id="battle-frame" hidden>
+        <canvas id="game" width="960" height="540" tabindex="0" aria-label="游戏画面，A D移动，空格跳跃，J攻击，S加J上挑或空中下砸，K闪避，U I技能，1 2切换"></canvas>
+        <div class="game-hud" id="hud" hidden>
+          <div class="party" id="party" aria-label="出战角色与伙伴"></div>
+          <div class="hud-corner">
+            <nav class="battle-tools" aria-label="战斗显示与声音">
+              <button class="battle-tool" data-fullscreen-toggle aria-label="进入全屏" aria-pressed="false"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M8 8 3 3m13 5 5-5M8 16l-5 5m13-5 5 5"/></svg><span class="fullscreen-label sr-only">全屏</span></button>
+              <button class="battle-tool" data-sound-toggle aria-label="关闭声音" aria-pressed="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h4l5-5v16l-5-5H3Z"/><g class="sound-waves"><path d="M16 7a7 7 0 0 1 0 10m3-13a11 11 0 0 1 0 16"/></g><path class="sound-muted-mark" d="m16 9 6 6m0-6-6 6"/></svg><span class="sound-label sr-only">声音</span></button>
+              <button class="battle-tool" id="pause-button" aria-label="暂停游戏"><span aria-hidden="true">Ⅱ</span><small>Esc</small></button>
+            </nav>
+            <div class="objective"><small id="hud-chapter">第一关</small><strong id="hud-objective"></strong><span class="hud-relics" id="hud-relics"></span><div class="journey-track" title="本幕路程"><i id="journey-progress"></i></div></div>
+          </div>
+        </div>
+        <div class="boss-hud" id="boss-hud" hidden><div><span id="boss-name">逆发结罗</span><small id="boss-state">发丝结界</small></div><div class="boss-track"><i id="boss-health"></i></div></div>
+        <div class="combat-bottom" id="combat-bottom" hidden>
+          <button class="hud-jewel" id="hud-jewel" aria-label="查看四魂之玉争夺进度"><svg class="jewel-symbol" viewBox="0 0 40 56" aria-hidden="true"><path d="m20 2 15 24-15 28L5 26Z" fill="#9b9ad0" stroke="#ddc69b"/><path d="m20 2-5 24 5 28 6-28Z" fill="#b8d7ec"/><path d="m5 26 15-8 15 8-15 8Z" fill="#86bed2"/></svg><span class="jewel-copy"><strong>四魂之玉</strong><span class="hud-jewel-track" aria-hidden="true"><i id="hud-jewel-fill"></i></span><span id="hud-jewel-shares">尚未玉碎</span></span></button>
+          <div class="action-cluster"><div class="skill-bar" aria-label="战斗行动">
+            <button class="action-tile" id="basic-attack" data-input="attack" aria-label="普通攻击，可按住"><kbd>J</kbd><span class="action-icon" id="basic-icon" aria-hidden="true"></span><span class="skill-name">普攻</span></button>
+            <button class="action-tile" id="dodge-action" data-input="dodge" aria-label="闪避"><kbd>K</kbd><span class="action-icon" id="dodge-icon" aria-hidden="true"></span><span class="skill-name">闪避</span></button>
+            <button class="action-tile skill-button" id="skill1" data-input="skill1"><kbd>U</kbd><span class="action-icon"><span class="skill-icon" aria-hidden="true"></span><span class="cooldown" aria-hidden="true"><b class="cooldown-value"></b></span></span><span class="skill-name">散魂铁爪</span></button>
+            <button class="action-tile skill-button" id="skill2" data-input="skill2"><kbd>I</kbd><span class="action-icon"><span class="skill-icon" aria-hidden="true"></span><span class="cooldown" aria-hidden="true"><b class="cooldown-value"></b></span></span><span class="skill-name">飞刃血爪</span></button>
+          </div><div class="combat-hint"><span><kbd>Tab</kbd> 切换</span><button id="combat-help"><kbd>?</kbd> 操作</button></div></div>
+        </div>
+        <button class="scene-interaction" id="scene-interaction" data-input="interact" hidden><kbd>E</kbd><span id="scene-interaction-label"></span></button>
+        <div class="dialogue" id="dialogue" hidden><div class="dialogue-portrait"><canvas id="dialogue-portrait" width="100" height="105"></canvas><span id="dialogue-symbol">✧</span></div><div class="dialogue-content"><div class="dialogue-heading"><strong id="dialogue-name"></strong><small id="dialogue-count"></small></div><p id="dialogue-text"></p><button id="dialogue-next">继续 <kbd>Enter</kbd> <span>▸</span></button></div></div>
+        <div class="touch-controls" id="touch-controls" hidden><div class="touch-directions"><button data-input="left" aria-label="向左">◀</button><button data-input="down" aria-label="配合攻击上挑或下砸">↓</button><button data-input="right" aria-label="向右">▶</button></div><div class="touch-actions"><button data-input="skill1" id="touch-skill1" aria-label="第一技能">技能一</button><button data-input="skill2" id="touch-skill2" aria-label="第二技能">技能二</button><button data-input="dodge" aria-label="闪避">闪避</button><button data-input="switch" aria-label="切换角色">切换</button><button data-input="jump" aria-label="跳跃">跳跃</button><button data-input="attack" aria-label="普通攻击，可按住">攻击</button></div></div>
+      </div>
+    </main>
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <dialog id="panel" aria-labelledby="panel-title"><div class="panel-top"><div><small id="panel-eyebrow">THE JOURNEY</small><h2 id="panel-title">章节</h2></div><button class="icon-button close-panel" id="panel-close" aria-label="关闭">×</button></div><nav class="journal-tabs" id="journal-tabs" role="tablist" aria-label="旅途手记" hidden><button role="tab" data-journal="journey" aria-controls="panel-content">旅程</button><button role="tab" data-journal="heroes" aria-controls="panel-content">伙伴</button><button role="tab" data-journal="jewel" aria-controls="panel-content">四魂之玉</button><button role="tab" data-journal="bestiary" aria-controls="panel-content">妖怪图鉴</button><button role="tab" data-journal="settings" aria-controls="panel-content">设置</button></nav><div id="panel-content"></div><div class="journal-footer" id="journal-footer" hidden><button class="button primary" id="journal-resume">继续旅程 →</button><button class="button secondary" id="journal-retry">从检查点重试</button><button class="journal-home" id="journal-home">返回首页</button></div></dialog>
+    <input type="file" id="import-file" accept="application/json,.json" hidden>
+  </div>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
