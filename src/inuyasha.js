@@ -1,3 +1,4 @@
+import { usesAwakenedFang } from './inventory.js';
 import { FLOOR, HEROES, statsFor, overlaps, clamp } from './data.js';
 import { isOrdinary, launchMonster } from './monsters.js';
 
@@ -33,7 +34,7 @@ export function bufferInuyashaInput(game, input) {
 }
 
 export function startInuyasha(game, skill = -1, requested) {
-  if (game.state !== 'playing' || game.dodgeClock > 0 || game.hurtClock > 0) return false;
+  if (game.state !== 'playing' || game.itemUse || game.dodgeClock > 0 || game.hurtClock > 0) return false;
   if (skill >= 0 && game.cooldowns.inuyasha[skill] > 0) return false;
   const h = game.hero, current = game.action;
   const special = requested === 'upper' || requested === 'plunge';
@@ -53,7 +54,7 @@ export function startInuyasha(game, skill = -1, requested) {
     id = game.airAttacks % 2 === 0 ? 'air1' : 'air2';
   }
   const def = INUYASHA_MOVES[id], stats = statsFor('inuyasha', game.save.heroes.inuyasha);
-  game.action = { id, elapsed: 0, facing: h.facing, hits: new Set(), effectStarted: false, trailClock: 0, weapon: skill < 0 && game.save.heroes.inuyasha.unlocks.includes('tessaiga-awaken'), damageType: skill >= 0 ? 'demon' : 'physical', damage: (skill >= 0 ? stats.power : stats.damage) * def.damage };
+  game.action = { id, elapsed: 0, facing: h.facing, hits: new Set(), effectStarted: false, trailClock: 0, weapon: skill < 0 && usesAwakenedFang(game.save), damageType: skill >= 0 ? 'demon' : 'physical', damage: (skill >= 0 ? stats.power : stats.damage) * def.damage };
   game.combatBuffer = null; game.attackClock = def.duration; game.attackCooldown = def.duration;
   game.comboTime = 1.05;
   if (skill >= 0) game.cooldowns.inuyasha[skill] = HEROES.inuyasha.cooldown[skill];

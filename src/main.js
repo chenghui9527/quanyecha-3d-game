@@ -8,6 +8,8 @@ import { Audio } from './audio.js';
 import { MONSTERS, MONSTER_IDS } from './monsters.js';
 import { partyView, energyView, objectiveText, relicCount, cooldownView } from './hud.js';
 import { nearbySceneDoor } from './scenery.js';
+import { CompanionMenu, CommonItemMenu } from './companions.js';
+import { usesAwakenedFang, itemUseReason } from './inventory.js';
 
 const $ = selector => document.querySelector(selector);
 const loaded = loadSave();
@@ -20,6 +22,8 @@ let panelJournalTab = null, panelReturnFocus = null, importReturnJournal = false
 let actionSignature = '';
 const queuedActions = new Set();
 const panel = $('#panel');
+const companionMenu = new CompanionMenu(), commonItemMenu = new CommonItemMenu();
+let pendingItemCommand = null, companionCanvasReady = false;
 const isTouch = matchMedia('(pointer: coarse)').matches;
 // Leave room for the visible grass/soil road edge below the collision line.
 $('#battle-frame').style.setProperty('--road-bottom', `${(FLOOR + 12) / HEIGHT * 100}%`);
@@ -62,6 +66,14 @@ function showPanel(title, eyebrow, html, journalTab = null) {
   if (!panel.open) { panelReturnFocus = document.activeElement; resumeAfterPanel = game.pause(); }
   panelJournalTab = journalTab;
   panel.classList.toggle('journey-panel', !!journalTab);
+  panel.classList.toggle('journal-panel', !!journalTab);
+  panel.classList.toggle('character-panel', ['heroes', 'items'].includes(journalTab));
+  panel.dataset.content = journalTab || '';
+  if (journalTab !== 'heroes') companionMenu.back();
+  if (journalTab !== 'items') commonItemMenu.back();
+  $('#journal-shortcuts').hidden = !journalTab;
+  $('#journal-active').hidden = !journalTab;
+  $('#journal-active').textContent = '当前出战：' + HEROES[game.active].name;
   $('#journal-tabs').hidden = !journalTab; $('#journal-footer').hidden = !journalTab;
   $('#panel-title').textContent = journalTab ? '旅途手记' : title;
   $('#panel-eyebrow').textContent = journalTab ? '游戏已暂停' : eyebrow;
@@ -80,10 +92,14 @@ function showPanel(title, eyebrow, html, journalTab = null) {
 }
 panel.addEventListener('close', () => {
   input = {};
-  if (resumeAfterPanel && game.state === 'paused') game.resume();
+  const command = pendingItemCommand; pendingItemCommand = null;
+  if (resumeAfterPanel && game.state === 'paused') {
+    game.resume();
+    if (command) { const result = game.useItem(command.id, command.target); if (!result.ok) toast(result.reason); }
+  }
   else if (['victory', 'dead', 'ending'].includes(game.state)) goHome();
   resumeAfterPanel = false;
-  panelJournalTab = null;
+  panelJournalTab = null; companionMenu.back(); commonItemMenu.back();
   if (!$('#faction-screen').hidden) $('#faction-start').focus();
   else if (game.state === 'playing') $('#game').focus({ preventScroll: true });
   else if (panelReturnFocus?.isConnected && !panelReturnFocus.closest('[hidden]')) panelReturnFocus.focus({ preventScroll: true });
@@ -98,15 +114,75 @@ function chapters() {
   }).join('')}</div></section>`).join('')}`);
   document.querySelectorAll('[data-stage]').forEach(button => button.addEventListener('click', () => beginStage(Number(button.dataset.stage))));
 }
-function heroes(journal = false) {
-  showPanel('并肩的伙伴', 'COMPANIONS · 剧情成长', `<p class="panel-description">人物随指定剧情成长，技能与武器在相应故事节点解锁。已完成的成长只记录一次。</p><div class="heroes-layout">${Object.entries(HEROES).map(([id, hero]) => {
-    const unlocked = save.unlocked.includes(id), progress = save.heroes[id], stats = statsFor(id, progress);
-    const growth = save.growthEvents.filter(key => GROWTH_EVENTS[key].hero === id).map(key => GROWTH_EVENTS[key].name);
-    const energy = energyView(game, id);
-    return `<article class="hero-card ${unlocked ? '' : 'locked'}"><div class="hero-card-top"><canvas class="hero-large-portrait" data-portrait="${id}" width="100" height="130"></canvas><div><h3>${hero.name}</h3><small>${hero.title}</small><span class="hero-role">${hero.role}</span></div></div><p class="hero-description">${hero.description}</p><div class="stat-line"><span>${unlocked ? '人物阶段' : '获得方式'}</span><b>${unlocked ? stats.stageName : '封印之森 · 主线加入'}</b></div><div class="stat-line"><span>生命上限 / 物理攻击</span><b>${stats.maxHp} / ${stats.damage}</b></div><div class="stat-line"><span>${energy.label}储量</span><b>${energy.text}</b></div><div class="stat-line"><span>${energy.label}强度</span><b>${stats.power}</b></div><div class="skill-description">${hero.skill.join(' · ')}<br>${id === 'inuyasha' ? progress.unlocks.includes('tessaiga-awaken') ? '铁碎牙 · 已觉醒（普通攻击为刀斩）' : progress.unlocks.includes('tessaiga') ? '铁碎牙 · 锈刀，尚未觉醒' : '铁碎牙 · 父亲的墓地中等待继承' : '灵光守护 · 为自己开启短时结界'}<br>已完成：${growth.join('、') || '等待故事中的转变'}</div></article>`;
-  }).join('')}</div>`, journal ? 'heroes' : null);
-  document.querySelectorAll('[data-portrait]').forEach(canvas => renderer.character(canvas.getContext('2d'), canvas.dataset.portrait, 45, 130, 0, 1, 0, 1.27));
+function drawCompanionArt() {
+  for (const canvas of document.querySelectorAll('[data-companion-portrait]')) drawPartyPortrait(canvas, canvas.dataset.companionPortrait);
+  for (const canvas of document.querySelectorAll('[data-companion-full]')) {
+    const id = canvas.dataset.companionFull, ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.imageSmoothingEnabled = false;
+    const ground = ctx.createRadialGradient(280, 570, 15, 280, 570, 190);
+    ground.addColorStop(0, '#9cac8b25'); ground.addColorStop(1, '#9cac8b00');
+    ctx.fillStyle = ground; ctx.beginPath(); ctx.ellipse(280, 570, 190, 31, 0, 0, Math.PI * 2); ctx.fill();
+    renderer.character(ctx, id, 265, 566, 0, 1, 0, 5.7);
+    if (id === 'inuyasha' && usesAwakenedFang(save)) {
+      ctx.save(); ctx.translate(270, 548); ctx.scale(2.6, 2.6); renderer.fang(ctx, -13, -61, .18); ctx.restore();
+    }
+  }
+  companionCanvasReady = !!renderer.frames;
 }
+function heroes(journal = false) {
+  if (!panel.open || panel.dataset.content !== 'heroes') companionMenu.open(game);
+  showPanel('伙伴档案', 'COMPANIONS · 剧情成长', companionMenu.render(game), journal ? 'heroes' : null);
+  panel.classList.add('character-panel', 'journal-panel'); panel.dataset.content = 'heroes';
+  drawCompanionArt();
+}
+function commonItems() {
+  if (!panel.open || panelJournalTab !== 'items') commonItemMenu.open(game);
+  showPanel('公用道具', '旅途补给', commonItemMenu.render(game), 'items');
+  drawCompanionArt();
+}
+$('#panel-content').addEventListener('click', event => {
+  const button = event.target.closest('button');
+  if (!button || button.disabled) return;
+  if (panel.dataset.content === 'heroes' && companionMenu.handle(game, button)) {
+    const focus = button.dataset.companionTab ? '[data-companion-tab="' + companionMenu.page + '"]' : button.dataset.companionHero ? '[data-companion-hero="' + companionMenu.hero + '"]' : button.dataset.gearSlot ? '[data-gear-slot="' + companionMenu.slot + '"]' : button.dataset.gearCandidate !== undefined ? '[data-gear-candidate="' + button.dataset.gearCandidate + '"]' : button.dataset.gearChoose !== undefined ? '[data-gear-cancel]' : button.dataset.gearConfirm !== undefined || button.dataset.gearCancel !== undefined ? '[data-gear-choose]' : '[data-companion-skill="' + companionMenu.skill + '"]';
+    heroes(panelJournalTab === 'heroes'); $(focus)?.focus({ preventScroll: true }); return;
+  }
+  if (panelJournalTab !== 'items') return;
+  const d = button.dataset;
+  let focus;
+  if (d.commonItem) { commonItemMenu.item = d.commonItem; commonItemMenu.choosing = false; focus = '[data-common-item="' + d.commonItem + '"]'; }
+  else if (d.itemChoose !== undefined) { commonItemMenu.choosing = true; commonItemMenu.target = game.active; focus = '[data-item-target="' + game.active + '"]'; }
+  else if (d.itemTarget) { commonItemMenu.target = d.itemTarget; focus = '[data-item-target="' + d.itemTarget + '"]'; }
+  else if (d.itemCancel !== undefined) { commonItemMenu.back(); focus = '[data-item-choose]'; }
+  else if (d.itemConfirm !== undefined) {
+    const reason = itemUseReason(game, commonItemMenu.item, commonItemMenu.target);
+    if (reason) { toast(reason); return; }
+    pendingItemCommand = { id: commonItemMenu.item, target: commonItemMenu.target };
+    panel.close(); return;
+  } else return;
+  commonItems(); $(focus)?.focus({ preventScroll: true });
+});
+$('#panel-content').addEventListener('keydown', event => {
+  const tab = event.target.closest('[role="tab"][data-companion-tab]');
+  if (!tab) return;
+  const tabs = [...document.querySelectorAll('[data-companion-tab][role="tab"]')], index = tabs.indexOf(tab);
+  let next;
+  if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+  else if (event.key === 'ArrowLeft') next = (index + tabs.length - 1) % tabs.length;
+  else if (event.key === 'Home') next = 0;
+  else if (event.key === 'End') next = tabs.length - 1;
+  else return;
+  event.preventDefault(); event.stopPropagation();
+  companionMenu.handle(game, tabs[next]); heroes(panelJournalTab === 'heroes');
+  $('[role="tab"][data-companion-tab="' + companionMenu.page + '"]').focus();
+});
+panel.addEventListener('cancel', event => {
+  if (panel.dataset.content === 'heroes' && companionMenu.back()) {
+    event.preventDefault(); heroes(panelJournalTab === 'heroes'); $('[data-gear-choose]')?.focus();
+  } else if (panelJournalTab === 'items' && commonItemMenu.back()) {
+    event.preventDefault(); commonItems(); $('[data-item-choose]')?.focus();
+  }
+});
 const shareText = units => `${(units / 100).toFixed(1).replace(/\.0$/, '')}%`;
 function jewelPanel(journal = false) {
   const progress = jewelProgress(save);
@@ -123,7 +199,7 @@ function bestiary(journal = false) {
 function toggleSound() { save.sound = !save.sound; audio.unlock(); audio.enabled = save.sound; if (hasSave) game.store(); updateSummary(); }
 function settings(journal = false) {
   const running = ['playing', 'paused'].includes(game.state);
-  showPanel(journal ? '片刻休憩' : '旅途指南', 'CONTROLS & SETTINGS', `<div class="settings-grid"><section><h3>掌握你的步伐</h3><div class="controls-list"><span>左右移动</span><span><kbd>A</kbd> <kbd>D</kbd> / <kbd>←</kbd> <kbd>→</kbd></span><span>跳跃</span><span><kbd>Space</kbd> / <kbd>W</kbd> / <kbd>↑</kbd></span><span>普通攻击 · 可按住</span><span><kbd>J</kbd></span><span>犬夜叉上挑 / 空中下砸</span><span><kbd>S</kbd> / <kbd>↓</kbd> ＋ <kbd>J</kbd></span><span>犬夜叉空中追打</span><span>跳跃后 <kbd>J</kbd></span><span>闪避 · 短暂无敌</span><span><kbd>K</kbd> / <kbd>Shift</kbd></span><span>主动技能</span><span><kbd>U</kbd> <kbd>I</kbd></span><span>切换犬夜叉 / 戈薇</span><span><kbd>1</kbd> <kbd>2</kbd> / <kbd>Tab</kbd></span><span>继续对话</span><span><kbd>E</kbd> / <kbd>Enter</kbd></span><span>暂停 / 继续</span><span><kbd>Esc</kbd></span></div><p class="settings-note">犬夜叉可用上挑将普通妖怪打浮空，再跳起追打，空中按S＋J下砸；飞刃血爪可从远处穿透多只妖怪。观察敌人头上的感叹号，及时闪避或跳跃。戈薇的箭会辅助瞄准前方目标；灵光守护为戈薇开启耐久结界，破界的一击不会溢出伤及本体。神社灯笼会保存检查点并恢复队伍。</p></section><section><h3>整装再出发</h3><div class="settings-actions">${running && !journal ? '<button class="button primary" id="resume-game">继续旅程 →</button><button class="button secondary" id="restart-checkpoint">从检查点重试</button>' : ''}<button class="button secondary" id="settings-sound">${save.sound ? '♫ 关闭声音' : '♩ 开启声音'}</button><button class="button secondary" id="export-save">导出存档</button><button class="button secondary" id="import-save">导入存档</button>${running && !journal ? '<button class="button secondary" id="return-home">返回首页</button>' : ''}<p class="settings-note">进度自动保存在当前浏览器。导出存档可保留备份，或将旅程带到另一台设备。导入将替换当前进度。</p></div></section></div>`, journal ? 'settings' : null);
+  showPanel(journal ? '片刻休憩' : '旅途指南', 'CONTROLS & SETTINGS', `<div class="settings-grid"><section><h3>掌握你的步伐</h3><div class="controls-list"><span>左右移动</span><span><kbd>A</kbd> <kbd>D</kbd> / <kbd>←</kbd> <kbd>→</kbd></span><span>跳跃</span><span><kbd>Space</kbd> / <kbd>W</kbd> / <kbd>↑</kbd></span><span>普通攻击 · 可按住</span><span><kbd>J</kbd></span><span>犬夜叉上挑 / 空中下砸</span><span><kbd>S</kbd> / <kbd>↓</kbd> ＋ <kbd>J</kbd></span><span>犬夜叉空中追打</span><span>跳跃后 <kbd>J</kbd></span><span>闪避 · 短暂无敌</span><span><kbd>K</kbd> / <kbd>Shift</kbd></span><span>主动技能</span><span><kbd>U</kbd> <kbd>I</kbd></span><span>切换犬夜叉 / 戈薇</span><span><kbd>1</kbd> <kbd>2</kbd> / <kbd>Tab</kbd></span><span>继续对话</span><span><kbd>E</kbd> / <kbd>Enter</kbd></span><span>人物面板</span><span><kbd>C</kbd></span><span>暂停 / 继续</span><span><kbd>Esc</kbd></span></div><p class="settings-note">犬夜叉可用上挑将普通妖怪打浮空，再跳起追打，空中按S＋J下砸；飞刃血爪可从远处穿透多只妖怪。观察敌人头上的感叹号，及时闪避或跳跃。戈薇的箭会辅助瞄准前方目标；灵光守护为戈薇开启耐久结界，破界的一击不会溢出伤及本体。神社灯笼会保存检查点并恢复队伍。</p></section><section><h3>整装再出发</h3><div class="settings-actions">${running && !journal ? '<button class="button primary" id="resume-game">继续旅程 →</button><button class="button secondary" id="restart-checkpoint">从检查点重试</button>' : ''}<button class="button secondary" id="settings-sound">${save.sound ? '♫ 关闭声音' : '♩ 开启声音'}</button><button class="button secondary" id="export-save">导出存档</button><button class="button secondary" id="import-save">导入存档</button>${running && !journal ? '<button class="button secondary" id="return-home">返回首页</button>' : ''}<p class="settings-note">进度自动保存在当前浏览器。导出存档可保留备份，或将旅程带到另一台设备。导入将替换当前进度。</p></div></section></div>`, journal ? 'settings' : null);
   const displayButton = document.createElement('button');
   displayButton.id = 'settings-fullscreen';
   displayButton.className = 'button secondary';
@@ -144,6 +220,7 @@ function settings(journal = false) {
 function openJournal(tab = 'journey') {
   if (!['playing', 'paused'].includes(game.state)) return;
   if (tab === 'heroes') return heroes(true);
+  if (tab === 'items') return commonItems();
   if (tab === 'jewel') return jewelPanel(true);
   if (tab === 'bestiary') return bestiary(true);
   if (tab === 'settings') return settings(true);
@@ -334,10 +411,10 @@ function updateHud() {
   $('#hud-relics').textContent = `信物 ${relicCount(game)} / 3`;
   if (isTouch && !dialogue) $('#battle-frame').style.setProperty('--objective-height', `${$('.objective').offsetHeight}px`);
   $('#journey-progress').style.width = `${Math.min(100, game.hero.x / game.level.length * 100)}%`;
-  const iconSignature = game.active + save.heroes.inuyasha.unlocks.join(',');
+  const iconSignature = game.active + save.heroes.inuyasha.unlocks.join(',') + usesAwakenedFang(save);
   if (iconSignature !== actionSignature) {
     actionSignature = iconSignature;
-    $('#basic-icon').innerHTML = combatIcon(game.active === 'kagome' ? 'arrow' : save.heroes.inuyasha.unlocks.includes('tessaiga-awaken') ? 'sword' : 'claw');
+    $('#basic-icon').innerHTML = combatIcon(game.active === 'kagome' ? 'arrow' : usesAwakenedFang(save) ? 'sword' : 'claw');
     $('#dodge-icon').innerHTML = combatIcon('dodge');
     $('#skill1 .skill-icon').innerHTML = combatIcon(game.active === 'kagome' ? 'spirit' : 'claw');
     $('#skill2 .skill-icon').innerHTML = combatIcon(game.active === 'kagome' ? 'shield' : 'blood');
@@ -373,10 +450,17 @@ function updateHud() {
 
 const mapping = { KeyA: 'left', ArrowLeft: 'left', KeyD: 'right', ArrowRight: 'right', KeyS: 'down', ArrowDown: 'down', Space: 'jump', KeyW: 'jump', ArrowUp: 'jump', KeyJ: 'attack', KeyK: 'dodge', ShiftLeft: 'dodge', ShiftRight: 'dodge', KeyU: 'skill1', KeyI: 'skill2', Digit1: 'one', Digit2: 'two', Tab: 'switch', KeyE: 'interact', Enter: 'interact' };
 window.addEventListener('keydown', event => {
-  if (panel.open) return;
+  if (panel.open) {
+    if (event.code === 'KeyC' && !event.repeat && (panelJournalTab || panel.dataset.content === 'heroes') && !event.target.closest?.('input,textarea,select,[contenteditable="true"]')) {
+      event.preventDefault();
+      if (panel.dataset.content === 'heroes') panel.close(); else openJournal('heroes');
+    }
+    return;
+  }
   if (!$('#faction-screen').hidden && event.code === 'Escape') { event.preventDefault(); returnFromFaction(); return; }
   if (game.state === 'dialogue' && ['Enter', 'KeyE', 'Space'].includes(event.code)) { event.preventDefault(); if (!event.repeat) game.nextDialogue(); return; }
   if (game.state !== 'playing') return;
+  if (event.code === 'KeyC') { event.preventDefault(); if (!event.repeat) openJournal('heroes'); return; }
   if (event.code === 'Escape') { event.preventDefault(); openJournal(); return; }
   if (event.key === '?') { event.preventDefault(); openJournal('settings'); return; }
   if (event.target.closest?.('[data-input]') && ['Enter', 'Space'].includes(event.code)) return;
@@ -417,6 +501,7 @@ $('#help-button').addEventListener('click', () => settings());
 for (const button of document.querySelectorAll('[data-sound-toggle]')) button.addEventListener('click', toggleSound);
 $('#pause-button').addEventListener('click', () => openJournal());
 $('#hud-jewel').addEventListener('click', () => openJournal('jewel'));
+$('#combat-characters').addEventListener('click', () => openJournal('heroes'));
 $('#combat-help').addEventListener('click', () => openJournal('settings'));
 function fullscreenActive() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
 function updateFullscreen() {
@@ -468,6 +553,7 @@ function frame(now) {
   queuedActions.clear();
   if (game.state !== 'menu') renderer.render(game, elapsed);
   audio.update(dt, game.state === 'playing');
+  if (panel.open && !companionCanvasReady && renderer.frames) drawCompanionArt();
   if (panel.open) for (const canvas of document.querySelectorAll('[data-monster-preview]')) renderer.monsterPortrait(canvas, canvas.dataset.monsterPreview, elapsed);
   if (elapsed - lastHud > 0.1) { updateHud(); lastHud = elapsed; }
   requestAnimationFrame(frame);

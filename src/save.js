@@ -1,11 +1,12 @@
 import { HEROES, LEVELS, GROWTH, clamp, statsFor } from './data.js';
+import { normalizeEquipment, normalizeInventory, normalizeItemClaims } from './inventory.js';
 import { playableFaction } from './factions.js';
 import { MONSTERS } from './monsters.js';
 import { SHARDS, GROWTH_EVENTS, freshJewel, grantGrowth, resolveWorldEvent, transferShard, progressSnapshot } from './campaign.js';
 export const SAVE_KEY = 'shikon-journey-save-v1';
 export function freshSave(faction = 'inuyasha') {
   const route = playableFaction(faction);
-  return { version: 2, faction, stage: route.startStage, unlockedStage: route.startStage, completed: [], unlocked: ['kagome'], heroes: { inuyasha: { stage: 0, unlocks: [] }, kagome: { stage: 0, unlocks: [] } }, growthEvents: [], worldEvents: [], jewel: freshJewel(), relics: [], flags: [], bestiary: [], stars: {}, checkpoint: null, runStart: null, playTime: 0, sound: true };
+  return { version: 2, faction, stage: route.startStage, unlockedStage: route.startStage, completed: [], unlocked: ['kagome'], heroes: { inuyasha: { stage: 0, unlocks: [] }, kagome: { stage: 0, unlocks: [] } }, inventory: normalizeInventory(), itemClaims: [], growthEvents: [], worldEvents: [], jewel: freshJewel(), relics: [], flags: [], bestiary: [], stars: {}, checkpoint: null, runStart: null, playTime: 0, sound: true };
 }
 export function newJourneySave(faction, current) {
   const save = freshSave(faction);
@@ -65,6 +66,9 @@ export function normalizeSave(input) {
     if (save.completed.includes(1)) { transferShard(save, 'village', 'inuyasha'); grantGrowth(save, 'promise'); }
     if (save.completed.includes(3)) { transferShard(save, 'yura', 'inuyasha'); grantGrowth(save, 'cooperation'); resolveWorldEvent(save, 'yura-resolved'); }
   }
+  for (const id of Object.keys(HEROES)) save.heroes[id].equipment = normalizeEquipment(save, id, input.heroes?.[id]?.equipment);
+  save.inventory = normalizeInventory(input.inventory);
+  save.itemClaims = normalizeItemClaims(input.itemClaims);
   const cp = input.checkpoint;
   if (cp && Number.isFinite(cp.x) && cp.stage === save.stage) {
     save.checkpoint = { stage: save.stage, x: clamp(cp.x, 0, LEVELS[save.stage].length - 160), waves: (Array.isArray(cp.waves) ? cp.waves : []).filter(x => Number.isInteger(x) && x >= 0 && x < 20), events: strings(cp.events), encounterVersion: cp.encounterVersion === 2 ? 2 : 1, bossDefeated: cp.bossDefeated === true, progress: legacy ? progressSnapshot(save) : cleanSnapshot(cp.progress) };

@@ -22,7 +22,7 @@ function step(game, seconds, input = {}) { for (let i = 0; i < Math.ceil(seconds
 
 test('the awakened fang extends a normal strike beyond claw range without changing base physical attack', () => {
   const claw = arena(), a = target(claw, 418), sword = arena(), b = target(sword, 418);
-  sword.save.heroes.inuyasha.unlocks.push('tessaiga-awaken');
+  sword.save.heroes.inuyasha.unlocks.push('tessaiga-awaken'); sword.save.heroes.inuyasha.equipment.weapon = 'tessaiga';
   claw.attack(); sword.attack(); step(claw, 0.17); step(sword, 0.17);
   assert.equal(a.hp, 10000); assert.equal(b.hp, 10000 - 26);
   assert.equal(statsFor('inuyasha', sword.save.heroes.inuyasha).damage, 26);

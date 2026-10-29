@@ -1,4 +1,5 @@
 import { LEVELS, HEROES, STORY, FLOOR, HERO_SWITCH_COOLDOWN, clamp, overlaps, statsFor } from './data.js';
+import { normalizeEquipment, normalizeInventory, normalizeItemClaims, equippedItems, equipGear, equipmentLocation, COMMON_ITEMS, itemUseReason, checkpointSupplies } from './inventory.js';
 import { persist } from './save.js';
 import { grantGrowth, GROWTH_EVENTS, transferShard, resolveWorldEvent, raceWinner, progressSnapshot, restoreProgress } from './campaign.js';
 import { reducedDamage, absorbBarrier } from './combat.js';
@@ -41,7 +42,43 @@ export class Game {
     this.lab = false;
     this.action = null; this.combatBuffer = null; this.airAttacks = 0; this.kagomeBuffer = null;
     this.combatPrevious = {};
-    this.sceneObjects = []; this.openDoors = new Set();
+    this.sceneObjects = []; this.openDoors = new Set(); this.itemUse = null;
+    this.save.inventory = normalizeInventory(this.save.inventory); this.save.itemClaims = normalizeItemClaims(this.save.itemClaims);
+    for (const id of Object.keys(HEROES)) this.save.heroes[id].equipment = normalizeEquipment(this.save, id, this.save.heroes[id].equipment);
+  }
+  statsForHero(id) { return statsFor(id, this.save.heroes[id]); }
+  equipmentLocation() { return equipmentLocation(this); }
+  equip(hero, slot, id) {
+    const result = equipGear(this, hero, slot, id);
+    if (result.ok) { this.store(); this.emit('equipment', { hero, slot, id }); }
+    return result;
+  }
+  useItem(id, target) {
+    const reason = itemUseReason(this, id, target);
+    if (reason || this.state !== 'playing') return { ok: false, reason: reason || '返回战斗后才能施用' };
+    const duration = COMMON_ITEMS[id].castTime;
+    this.itemUse = { id, target, actor: this.active, remaining: duration, duration };
+    this.combatBuffer = null; this.kagomeBuffer = null; this.hero.vx = 0;
+    this.emit('toast', COMMON_ITEMS[id].name + ' · 施用中，闪避可取消');
+    return { ok: true };
+  }
+  cancelItemUse() { this.itemUse = null; }
+  advanceItemUse(dt) {
+    const use = this.itemUse;
+    if (!use) return;
+    if (this.active !== use.actor || this.health[use.actor] <= 0 || this.health[use.target] <= 0 || this.hurtClock > 0) { this.cancelItemUse(); return; }
+    use.remaining -= dt;
+    if (use.remaining > 1e-9) return;
+    const item = COMMON_ITEMS[use.id], count = this.save.inventory[use.id];
+    this.cancelItemUse();
+    const needed = item.heal ? this.health[use.target] < this.statsForHero(use.target).maxHp : this.statuses[use.target].poison.length > 0;
+    if (!count || !needed) { this.emit('toast', '效果已无需施用，保留道具'); return; }
+    if (item.heal) this.health[use.target] = Math.min(this.statsForHero(use.target).maxHp, this.health[use.target] + item.heal);
+    if (item.cleanse === 'poison') this.statuses[use.target].poison = [];
+    this.save.inventory[use.id]--;
+    this.burst(this.hero.x + 15, this.hero.y + 30, '#b0dec0', 18);
+    this.emit('toast', HEROES[use.target].name + ' · ' + item.name + '已生效');
+    this.emit('sound', 'heal'); this.store();
   }
   get hurtClock() { return this.controls[this.active].hurt; }
   set hurtClock(value) { this.controls[this.active].hurt = value; }
@@ -58,6 +95,7 @@ export class Game {
     const run = resume && this.save.runStart?.stage === index ? this.save.runStart : null;
     if (resume) restoreProgress(this.save, cp?.progress || run?.progress);
     else { this.save.checkpoint = null; this.save.runStart = { stage: index, progress: progressSnapshot(this.save), vitals }; }
+    this.cancelItemUse();
     this.level = LEVELS[index]; this.save.stage = index;
     this.sceneObjects = createScenery(this.level, this.lab); this.openDoors = new Set();
     this.hero = { x: cp?.x || 140, y: FLOOR - 68, w: 30, h: 68, vx: 0, vy: 0, facing: 1, grounded: false };
@@ -91,7 +129,7 @@ export class Game {
   }
 
   showDialogue(key, done) {
-    this.state = 'dialogue'; this.hero.vx = 0;
+    this.cancelItemUse(); this.state = 'dialogue'; this.hero.vx = 0;
     this.dialogue = { key, lines: STORY[key] || [], index: 0, done };
     this.emit('dialogue', this.dialogue);
   }
@@ -116,7 +154,10 @@ export class Game {
       this.showDialogue(moved ? 'shardMoved' : item.dialogue, () => {
         this.events.add(item.id);
         if (item.shard && !moved) transferShard(this.save, item.shard, 'inuyasha');
-        if (item.id === 'fang-taken' && !this.save.heroes.inuyasha.unlocks.includes('tessaiga')) this.save.heroes.inuyasha.unlocks.push('tessaiga');
+        if (item.id === 'fang-taken' && !this.save.heroes.inuyasha.unlocks.includes('tessaiga')) {
+          this.save.heroes.inuyasha.unlocks.push('tessaiga');
+          this.save.heroes.inuyasha.equipment = { ...equippedItems(this.save, 'inuyasha'), weapon: 'tessaiga' };
+        }
         this.store(); this.checkRace();
       });
       return true;
@@ -146,7 +187,7 @@ export class Game {
 
   switchTo(id) {
     if (this.state !== 'playing' || id === this.active || !this.save.unlocked.includes(id) || this.health[id] <= 0 || this.switchCooldown > 0) return false;
-    cancelInuyasha(this); this.combo = 0; this.comboTime = 0; this.airAttacks = 0;
+    this.cancelItemUse(); cancelInuyasha(this); this.combo = 0; this.comboTime = 0; this.airAttacks = 0;
     this.active = id; this.hero.vx = 0; this.kagomeBuffer = null; this.switchCooldown = HERO_SWITCH_COOLDOWN; this.attackCooldown = 0.1;
     this.burst(this.hero.x + 15, this.hero.y + 35, HEROES[id].color, 20);
     this.emit('sound', 'switch'); this.emit('switch', id); return true;
@@ -183,7 +224,7 @@ export class Game {
     if (absorbBarrier(this.barriers[this.active], amount, type)) return false;
     amount = reducedDamage(amount, type, HEROES[this.active]);
     this.health[this.active] = Math.max(0, this.health[this.active] - amount); this.damageTaken += amount;
-    cancelInuyasha(this);
+    this.cancelItemUse(); cancelInuyasha(this);
     this.hurtClock = Math.max(this.hurtClock, 0.24); this.hero.vx = direction * 170; this.hero.vy = -150; this.shake = 6;
     this.burst(this.hero.x + 15, this.hero.y + 30, '#f19c91', 15); this.emit('sound', 'hurt');
     this.resolveDefeat();
@@ -233,7 +274,7 @@ export class Game {
 
   attack(skill = -1, move) {
     if (this.active === 'inuyasha') return startInuyasha(this, skill, move);
-    if (this.state !== 'playing' || this.attackCooldown > 0 || this.dodgeClock > 0 || this.hurtClock > 0) return false;
+    if (this.state !== 'playing' || this.itemUse || this.attackCooldown > 0 || this.dodgeClock > 0 || this.hurtClock > 0) return false;
     if (skill >= 0 && this.cooldowns[this.active][skill] > 0) return false;
     const h = this.hero, stats = statsFor(this.active, this.save.heroes[this.active]);
     this.attackClock = skill >= 0 ? 0.48 : 0.3; this.attackCooldown = skill >= 0 ? 0.5 : this.active === 'kagome' ? 0.4 : 0.32;
@@ -276,11 +317,12 @@ export class Game {
     this.emit('toast', `${this.encounter.wave === 1 ? '妖气涌动' : '后续敌人出现'} · ${this.encounter.wave} / ${data.count}`);
   }
   activateCheckpoint(x) {
+    const supplied = checkpointSupplies(this.save, this.level.id, x);
     this.save.checkpoint = { stage: this.level.id, x: x + 25, waves: [...this.cleared], events: [...this.events], encounterVersion: 2, bossDefeated: this.bossDefeated, progress: progressSnapshot(this.save) };
     this.shrines.add(x);
     for (const id of this.save.unlocked) this.health[id] = statsFor(id, this.save.heroes[id]).maxHp;
     this.clearStatuses();
-    this.store(); this.emit('toast', '神社检查点 · 进度已保存，队伍生命已恢复'); this.emit('sound', 'checkpoint');
+    this.store(); this.emit('toast', supplied ? '神社检查点 · 恢复队伍，获得药草与解毒药各1份' : '神社检查点 · 进度已保存，队伍生命已恢复'); this.emit('sound', 'checkpoint');
     this.burst(x, FLOOR - 55, '#b9e3c3', 30);
   }
   retry() { return this.start(this.level.id, true); }
@@ -310,7 +352,9 @@ export class Game {
     if (this.state !== 'playing' || !Number.isFinite(dt) || dt <= 0) return;
     dt = Math.min(dt, 1 / 30);
     this.time += dt; this.stageTime += dt; this.save.playTime += dt;
-    bufferInuyashaInput(this, input);
+    if (this.itemUse && (input.dodge || input.jump || input.one || input.two || input.switch)) this.cancelItemUse();
+    this.advanceItemUse(dt);
+    if (!this.itemUse) bufferInuyashaInput(this, input);
     if (this.hitStop > 0) { if (input.jump && !this.previous.jump) this.jumpBuffer = 0.14; this.hitStop -= dt; return; }
     this.updateStatuses(dt);
     if (this.state !== 'playing') return;
@@ -329,7 +373,7 @@ export class Game {
     if (press('one')) this.switchTo('inuyasha');
     if (press('two')) this.switchTo('kagome');
     if (press('switch')) this.switchTo(this.active === 'inuyasha' ? 'kagome' : 'inuyasha');
-    const direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
+    const direction = this.itemUse ? 0 : (input.right ? 1 : 0) - (input.left ? 1 : 0);
     if (direction && !this.dodgeClock && !this.hurtClock && !this.action) h.facing = direction;
     if (press('jump')) this.jumpBuffer = 0.14; else this.jumpBuffer = Math.max(0, this.jumpBuffer - dt);
     this.coyote = h.grounded ? 0.12 : Math.max(0, this.coyote - dt);
@@ -337,7 +381,8 @@ export class Game {
     if (this.jumpBuffer > 0 && this.coyote > 0 && !this.dodgeClock && !this.hurtClock && (!this.action || this.action.elapsed >= jumpCancelAt)) { if (this.active === 'inuyasha') cancelInuyasha(this); h.vy = -620; h.grounded = false; this.coyote = 0; this.jumpBuffer = 0; this.emit('sound', 'jump'); }
     if (press('dodge') && this.dodgeCooldown <= 0 && !this.hurtClock) { if (this.active === 'inuyasha') cancelInuyasha(this); this.dodgeClock = 0.25; this.dodgeCooldown = 0.88; this.invulnerable = 0.3; this.emit('sound', 'dodge'); }
     if (!this.hurtClock) h.vx = this.dodgeClock > 0 ? h.facing * 590 : direction * statsFor(this.active, this.save.heroes[this.active]).speed * (this.attackClock > 0 ? 0.55 : 1) * (1 - this.statuses[this.active].slow);
-    if (this.active === 'inuyasha') {
+    if (this.itemUse) { h.vx = 0; }
+    else if (this.active === 'inuyasha') {
       const pending = this.combatBuffer;
       if (pending) this.attack(pending.skill, pending.move);
       else if (input.attack && !input.down) this.attack();

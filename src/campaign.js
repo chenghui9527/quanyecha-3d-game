@@ -1,4 +1,5 @@
 import { CHAPTERS } from './data.js';
+import { equippedItems, normalizeInventory, normalizeItemClaims } from './inventory.js';
 
 // Opening content uses a small part of the same finite jewel. Units are 1/100%.
 export const SHARDS = {
@@ -37,7 +38,10 @@ export function grantGrowth(save, id) {
   save.growthEvents.push(id);
   const hero = save.heroes[event.hero];
   hero.stage = Math.max(hero.stage, event.stage);
-  if (event.unlock && !hero.unlocks.includes(event.unlock)) hero.unlocks.push(event.unlock);
+  if (event.unlock && !hero.unlocks.includes(event.unlock)) {
+    hero.unlocks.push(event.unlock);
+    if (event.unlock === 'tessaiga-awaken') hero.equipment = { ...equippedItems(save, 'inuyasha'), weapon: 'tessaiga' };
+  }
   return true;
 }
 export function resolveWorldEvent(save, id) {
@@ -48,7 +52,7 @@ export function resolveWorldEvent(save, id) {
 }
 export function completedChapters(save) { return CHAPTERS.filter(chapter => chapter.stages.every(id => save.completed.includes(id))); }
 export function progressSnapshot(save) {
-  return structuredClone(Object.fromEntries(['unlocked', 'heroes', 'growthEvents', 'worldEvents', 'flags', 'relics', 'jewel', 'bestiary'].map(key => [key, save[key]])));
+  return structuredClone({ ...Object.fromEntries(['unlocked', 'heroes', 'growthEvents', 'worldEvents', 'flags', 'relics', 'jewel', 'bestiary'].map(key => [key, save[key]])), inventory: normalizeInventory(save.inventory), itemClaims: normalizeItemClaims(save.itemClaims) });
 }
 export function restoreProgress(save, snapshot) {
   if (snapshot) for (const [key, value] of Object.entries(progressSnapshot(snapshot))) save[key] = value;

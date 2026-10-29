@@ -1,4 +1,5 @@
 import { WIDTH, HEIGHT, FLOOR, HEROES, clamp } from './data.js';
+import { usesAwakenedFang } from './inventory.js';
 import { MONSTERS } from './monsters.js';
 import { INUYASHA_MOVES, inuyashaHitbox, sankonBladeContours } from './inuyasha.js';
 import { SceneArt } from './scenery.js';
@@ -635,7 +636,7 @@ export class Renderer {
     const running = Math.abs(h.vx) > 20 && h.grounded;
     const pose = game.attackClock > 0 ? 3 : !h.grounded ? 2 : running && Math.floor(elapsed * 9) % 3 !== 0 ? 1 : 0;
     if (!(game.active === 'inuyasha' && game.action && this.combatCharacter(ctx, h.x + 15, h.y + h.h + 1, game.action))) this.character(ctx, game.active, h.x + 15, h.y + h.h + 1, pose, h.facing, elapsed);
-    if (game.active === 'inuyasha' && !game.action && game.save.heroes.inuyasha.unlocks.includes('tessaiga-awaken')) { ctx.save(); ctx.translate(h.x+15,h.y+h.h); ctx.scale(h.facing,1); this.fang(ctx,8,-38,0.9); ctx.restore(); }
+    if (game.active === 'inuyasha' && !game.action && usesAwakenedFang(game.save)) { ctx.save(); ctx.translate(h.x+15,h.y+h.h); ctx.scale(h.facing,1); this.fang(ctx,8,-38,0.9); ctx.restore(); }
     ctx.globalAlpha = 1;
     if (game.action?.id === 'scatter' && game.action.elapsed < INUYASHA_MOVES.scatter.windup) {
       const p = game.action.elapsed / INUYASHA_MOVES.scatter.windup;
@@ -650,6 +651,10 @@ export class Renderer {
     if (status?.poison.length || status?.slow > 0) {
       ctx.font = '12px sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = status.poison.length ? '#d7b0e8' : '#ddd9c6';
       ctx.fillText(`${status.poison.length ? `中毒×${status.poison.length} ` : ''}${status.slow > 0 ? '减速' : ''}`, h.x + 15, h.y - 14);
+    }
+    if (game.itemUse) {
+      const progress = 1 - game.itemUse.remaining / game.itemUse.duration;
+      ctx.strokeStyle = '#b6e3ba'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(h.x + 15, h.y - 20, 11, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress); ctx.stroke();
     }
     const barrier = game.barriers?.[game.active];
     if (barrier?.hp > 0 && barrier.life > 0) { ctx.strokeStyle = '#b8e7df'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(h.x+15,h.y+34,38,50,0,0,Math.PI*2); ctx.stroke(); }
