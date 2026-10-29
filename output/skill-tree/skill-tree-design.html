@@ -1,0 +1,143 @@
+<style>
+#journey-skill-design{--st-bg:#081d20;--st-panel:#0b2326;--st-deep:#07181c;--st-gold:#e7c78a;--st-ink:#eee5cd;--st-muted:#b4c2b4;--st-line:#7f7651;--st-faint:#354949;--st-space:23px;--st-detail:226px;--st-branch-opacity:.66;color-scheme:dark;font-family:"Songti SC","STSong","Noto Serif SC",serif;color:var(--st-ink);width:100%;box-sizing:border-box}
+#journey-skill-design *{box-sizing:border-box}
+#journey-skill-design button{font:inherit;color:inherit}
+#journey-skill-design .st-window{position:relative;padding:22px;background:radial-gradient(ellipse at 50% 45%,#193b3738,transparent 65%),var(--st-bg);border:1px solid var(--st-gold);box-shadow:inset 0 0 0 5px #d8bf7820;clip-path:polygon(12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px),0 12px)}
+#journey-skill-design .st-window:before{content:"";position:absolute;inset:7px;border:1px solid #d6b97b35;pointer-events:none}
+#journey-skill-design .st-top{display:flex;align-items:center;gap:15px;padding:0 95px 16px 0}
+#journey-skill-design .st-top h2{font-size:25px;font-weight:400;letter-spacing:.16em;margin:0}
+#journey-skill-design .st-pause{font-size:11px;letter-spacing:.15em;border:1px solid var(--st-line);padding:4px 8px;color:var(--st-gold);white-space:nowrap}
+#journey-skill-design .st-global{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-top:1px solid var(--st-line);border-bottom:1px solid var(--st-line);margin-bottom:20px}
+#journey-skill-design .st-global span{font-size:13px;padding:12px 4px;text-align:center;color:var(--st-muted);white-space:nowrap}
+#journey-skill-design .st-global .st-current{color:var(--st-gold);background:#d7bb7410;position:relative}
+#journey-skill-design .st-global .st-current:after{content:"";position:absolute;bottom:-3px;left:calc(50% - 3px);width:6px;height:6px;background:var(--st-gold);transform:rotate(45deg)}
+#journey-skill-design .st-body{display:grid;grid-template-columns:135px minmax(0,1fr) var(--st-detail);gap:18px;min-height:510px}
+#journey-skill-design .st-roster{border-right:1px solid var(--st-line);padding-right:14px;display:flex;flex-direction:column;gap:12px}
+#journey-skill-design .st-roster h3{font-size:15px;letter-spacing:.15em;margin:1px 0 3px;font-weight:400;color:var(--st-gold)}
+#journey-skill-design .st-person{display:flex;align-items:center;gap:9px;width:100%;text-align:left;padding:12px 7px;background:var(--st-deep);border:1px solid var(--st-faint);min-height:66px}
+#journey-skill-design .st-person[aria-pressed=true]{border-color:var(--st-gold);background:#263732}
+#journey-skill-design .st-crest{width:31px;height:35px;display:grid;place-items:center;border:1px solid var(--st-line);color:var(--st-gold);font-size:21px;flex-shrink:0}
+#journey-skill-design .st-person strong{display:block;font-size:14px;font-weight:400;white-space:nowrap}
+#journey-skill-design .st-person small{display:block;color:var(--st-muted);font-size:11px;margin-top:6px;white-space:nowrap}
+#journey-skill-design .st-roster-note{font-size:11px;line-height:1.8;color:var(--st-muted);margin-top:auto}
+#journey-skill-design .st-tree-area{min-width:0}
+#journey-skill-design .st-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+#journey-skill-design .st-heading h3{font-weight:400;font-size:24px;letter-spacing:.14em;margin:0 0 7px}
+#journey-skill-design .st-heading small{font-size:11px;color:var(--st-muted)}
+#journey-skill-design .st-sample{font-size:11px;color:var(--st-muted);line-height:1.6;text-align:right;padding-top:4px}
+#journey-skill-design .st-local{display:flex;gap:20px;margin:20px 0 15px;padding-bottom:9px;border-bottom:1px solid var(--st-line);font-size:14px;color:var(--st-muted)}
+#journey-skill-design .st-local .st-current{color:var(--st-gold);position:relative}
+#journey-skill-design .st-local .st-current:after{content:"";position:absolute;bottom:-10px;left:0;right:0;height:2px;background:var(--st-gold)}
+#journey-skill-design .st-tree{position:relative;padding:4px 0 8px;isolation:isolate}
+#journey-skill-design .st-root{display:flex;justify-content:center;position:relative;padding-bottom:28px}
+#journey-skill-design .st-root:after{content:"";position:absolute;width:1px;bottom:0;height:28px;background:var(--st-line);opacity:var(--st-branch-opacity)}
+#journey-skill-design .st-root span{border:1px solid var(--st-line);padding:7px 19px;background:var(--st-panel);font-size:12px;letter-spacing:.16em;color:var(--st-gold);clip-path:polygon(9px 0,calc(100% - 9px) 0,100% 9px,100% calc(100% - 9px),calc(100% - 9px) 100%,9px 100%,0 calc(100% - 9px),0 9px)}
+#journey-skill-design .st-branches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;position:relative;--st-count:3}
+#journey-skill-design .st-branches:before{content:"";position:absolute;top:0;left:16.666%;right:16.666%;height:1px;background:var(--st-line);opacity:var(--st-branch-opacity)}
+#journey-skill-design .st-branch{position:relative;min-width:0;padding-top:22px;text-align:center}
+#journey-skill-design .st-branch:before{content:"";position:absolute;top:0;left:50%;height:22px;width:1px;background:var(--st-line);opacity:var(--st-branch-opacity)}
+#journey-skill-design .st-branch.is-related:before{background:var(--st-gold);opacity:1}
+#journey-skill-design .st-branch h4{font-size:12px;letter-spacing:.08em;font-weight:400;margin:0 0 7px;color:var(--st-muted);position:relative;z-index:1;background:var(--st-bg)}
+#journey-skill-design .st-branch.is-related h4{color:var(--st-gold)}
+#journey-skill-design .st-nodes{display:flex;flex-direction:column;gap:var(--st-space);padding-top:13px;position:relative}
+#journey-skill-design .st-nodes:before{content:"";position:absolute;top:0;bottom:53px;left:7px;width:1px;background:var(--st-line);opacity:var(--st-branch-opacity)}
+#journey-skill-design .st-nodes:after{content:"";position:absolute;top:0;left:7px;width:calc(50% - 7px);height:1px;background:var(--st-line);opacity:var(--st-branch-opacity)}
+#journey-skill-design .st-node:before{content:"";position:absolute;top:27px;left:7px;width:calc(50% - 7px);height:1px;background:var(--st-line);opacity:var(--st-branch-opacity);z-index:-1}
+#journey-skill-design .st-node{position:relative;display:flex;align-items:center;flex-direction:column;gap:7px;padding:3px 0 0;min-height:79px;border:0;background:transparent;text-align:center;min-width:0;width:100%;isolation:isolate}
+#journey-skill-design .st-diamond{position:relative;display:grid;place-items:center;width:40px;height:40px;margin:5px 0 7px;border:1px solid var(--st-line);background:var(--st-panel);transform:rotate(45deg)}
+#journey-skill-design .st-diamond:after{content:"";position:absolute;inset:4px;border:1px solid #d6b97b25}
+#journey-skill-design .st-diamond>i{transform:rotate(-45deg);font-style:normal;font-size:19px;color:var(--st-gold);letter-spacing:0}
+#journey-skill-design .st-node-label{font-size:12px;line-height:1.5;overflow-wrap:anywhere;padding:0 2px;color:var(--st-ink)}
+#journey-skill-design .st-node small{font-size:11px;color:var(--st-muted);line-height:1.3}
+#journey-skill-design .st-node[aria-pressed=true] .st-diamond{border-color:var(--st-gold);box-shadow:0 0 16px #e2bf6445;background:#3c4130}
+#journey-skill-design .st-node[aria-pressed=true] .st-diamond:before{content:"";position:absolute;inset:-5px;border:1px solid var(--st-gold)}
+#journey-skill-design .st-node[aria-pressed=true] .st-node-label{color:var(--st-gold)}
+#journey-skill-design .st-node[data-status=locked] .st-diamond{border-style:dashed;background:var(--st-deep)}
+#journey-skill-design .st-node[data-status=locked] .st-diamond>i,#journey-skill-design .st-node[data-status=unknown] .st-diamond>i{color:var(--st-muted)}
+#journey-skill-design .st-node[data-status=unknown] .st-diamond{border-color:var(--st-faint);background:var(--st-deep)}
+#journey-skill-design .st-node[data-status=unknown] .st-node-label{color:var(--st-muted)}
+#journey-skill-design .st-legend{display:flex;gap:15px;flex-wrap:wrap;justify-content:center;border-top:1px solid var(--st-faint);margin-top:19px;padding-top:11px;font-size:11px;color:var(--st-muted)}
+#journey-skill-design .st-legend span{display:flex;gap:5px;align-items:center}
+#journey-skill-design .st-legend i{font-style:normal;color:var(--st-gold)}
+#journey-skill-design .st-legend span:last-child i{color:var(--st-muted)}
+#journey-skill-design .st-detail{border-left:1px solid var(--st-line);padding:4px 0 0 18px;min-width:0;display:flex;flex-direction:column}
+#journey-skill-design .st-overline{font-size:11px;letter-spacing:.14em;color:var(--st-muted);margin-bottom:15px}
+#journey-skill-design .st-detail-mark{width:61px;height:61px;border:1px solid var(--st-line);display:grid;place-items:center;transform:rotate(45deg);margin:15px auto 30px;background:var(--st-panel);box-shadow:inset 0 0 0 5px #d7b7740a}
+#journey-skill-design .st-detail-mark i{font-style:normal;transform:rotate(-45deg);font-size:29px;color:var(--st-gold)}
+#journey-skill-design .st-detail h3{font-size:24px;letter-spacing:.12em;font-weight:400;margin:0 0 10px;color:var(--st-gold);line-height:1.5;overflow-wrap:anywhere}
+#journey-skill-design .st-kind{color:var(--st-muted);font-size:12px;margin:0 0 17px;line-height:1.7}
+#journey-skill-design .st-status{align-self:flex-start;border:1px solid var(--st-line);padding:4px 9px;font-size:11px;color:var(--st-gold);margin-bottom:17px}
+#journey-skill-design .st-description{font-size:13px;line-height:1.9;color:var(--st-ink);margin:0 0 15px;min-height:76px}
+#journey-skill-design .st-facts{margin:0;border-top:1px solid var(--st-faint);font-size:12px}
+#journey-skill-design .st-facts div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--st-faint);line-height:1.6}
+#journey-skill-design .st-facts dt{color:var(--st-muted);flex-shrink:0}
+#journey-skill-design .st-facts dd{margin:0;text-align:right;color:var(--st-ink);overflow-wrap:anywhere}
+#journey-skill-design .st-source{margin:18px 0 0;padding-left:10px;border-left:2px solid var(--st-line);font-size:12px;line-height:1.8;color:var(--st-muted)}
+#journey-skill-design .st-source span{display:block;color:var(--st-gold);margin-bottom:4px}
+#journey-skill-design .st-use{font-size:12px;color:var(--st-gold);line-height:1.8;margin-top:auto;padding-top:22px}
+#journey-skill-design kbd{font-family:Georgia,serif;font-size:12px;border:1px solid var(--st-line);padding:2px 5px;margin-right:4px;color:var(--st-ink)}
+#journey-skill-design .st-footer{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-top:20px;border-top:1px solid var(--st-line);padding-top:15px;font-size:11px;line-height:1.7;color:var(--st-muted)}
+#journey-skill-design .st-footer strong{font-weight:400;color:var(--st-gold);font-size:13px;white-space:nowrap;letter-spacing:.08em}
+@media(max-width:900px){#journey-skill-design .st-body{grid-template-columns:minmax(0,1fr) var(--st-detail);gap:17px}#journey-skill-design .st-roster{grid-column:1/-1;flex-direction:row;align-items:center;border-right:0;border-bottom:1px solid var(--st-line);padding:0 0 15px}#journey-skill-design .st-roster h3{font-size:13px;white-space:nowrap}#journey-skill-design .st-person{width:auto;min-width:120px;padding:7px 10px;min-height:57px}#journey-skill-design .st-roster-note{margin:0 0 0 auto;max-width:150px}#journey-skill-design .st-node-label{font-size:12px}}
+@media(max-width:600px){#journey-skill-design .st-window{padding:17px 12px}#journey-skill-design .st-top h2{font-size:21px}#journey-skill-design .st-top{gap:10px;flex-wrap:wrap;padding-right:70px}#journey-skill-design .st-body{grid-template-columns:minmax(0,1fr)}#journey-skill-design .st-global{grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:15px}#journey-skill-design .st-global span{padding:9px 3px;font-size:12px}#journey-skill-design .st-roster{gap:7px;flex-wrap:wrap}#journey-skill-design .st-roster h3{display:none}#journey-skill-design .st-person{flex:1;min-width:105px;padding:7px}#journey-skill-design .st-roster-note{display:none}#journey-skill-design .st-detail{border-left:0;border-top:1px solid var(--st-line);padding:20px 0 0;display:block}#journey-skill-design .st-detail-mark{float:right;margin:20px 15px 20px 25px;width:48px;height:48px}#journey-skill-design .st-overline{margin-bottom:10px}#journey-skill-design .st-description{min-height:0}#journey-skill-design .st-detail h3{font-size:22px}#journey-skill-design .st-use{margin-bottom:0}#journey-skill-design .st-footer{align-items:flex-start}#journey-skill-design .st-footer>span{max-width:190px}#journey-skill-design .st-local{justify-content:space-between;gap:12px}#journey-skill-design .st-branches{gap:5px}#journey-skill-design .st-heading h3{font-size:23px}#journey-skill-design .st-sample{max-width:100px}#journey-skill-design .st-branch h4{letter-spacing:0}}
+</style>
+<div id="journey-skill-design" aria-label="人物技能树布局提案">
+  <div class="st-window">
+    <header class="st-top"><h2>旅途手记</h2><span class="st-pause">旅程暂停</span></header>
+    <nav class="st-global" aria-label="旅途手记栏目"><span>旅程</span><span class="st-current" aria-current="page">伙伴</span><span>公用道具</span><span>四魂之玉</span><span>妖怪图鉴</span><span>设置</span></nav>
+    <div class="st-body">
+      <aside class="st-roster" aria-label="查看伙伴">
+        <h3>同行伙伴</h3>
+        <button type="button" class="st-person cursor-interaction" data-hero="inuyasha" aria-pressed="true"><span class="st-crest" aria-hidden="true">犬</span><span><strong>犬夜叉</strong><small>半妖少年</small></span></button>
+        <button type="button" class="st-person cursor-interaction" data-hero="kagome" aria-pressed="false"><span class="st-crest" aria-hidden="true">薇</span><span><strong>戈薇</strong><small>跨越时空</small></span></button>
+        <p class="st-roster-note">查看伙伴的招式<br>与旅途中获得的力量</p>
+      </aside>
+      <section class="st-tree-area" aria-label="技能树">
+        <div class="st-heading"><div><h3 data-hero-name>犬夜叉</h3><small data-hero-caption>妖力 · 爪技与刀技</small></div><span class="st-sample">布局提案<br><span data-sample>铁碎牙觉醒前</span></span></div>
+        <nav class="st-local" aria-label="人物栏目"><span>属性</span><span class="st-current" aria-current="page">技能</span><span>装备</span><span>成长</span></nav>
+        <div class="st-tree"><div class="st-root"><span>力量之源</span></div><div class="st-branches" data-branches></div></div>
+        <div class="st-legend" aria-label="节点图例"><span><i aria-hidden="true">◆</i>已掌握</span><span><i aria-hidden="true">◇</i>剧情未解锁</span><span><i aria-hidden="true">?</i>未知能力</span></div>
+      </section>
+      <section class="st-detail" aria-label="所选技能详情" aria-live="polite" aria-atomic="true" data-detail></section>
+    </div>
+    <footer class="st-footer"><span><kbd>C</kbd><kbd>Esc</kbd>返回旅途 · 点击节点查看详情</span><strong>随旅程领悟力量</strong></footer>
+  </div>
+</div>
+<script>
+(()=>{
+  const root=document.getElementById('journey-skill-design');
+  const facts=(key,cooldown,damage)=>[['操作',key],['冷却',cooldown],['效果',damage]];
+  const records={
+    attack:{name:'连续攻击',mark:'击',status:'known',kind:'基础动作 · 物理',key:'J',summary:'按住 J 连续出招，以爪击压制近处的敌人。铁碎牙觉醒并实际装备后，普通攻击切换为刀斩。',facts:facts('J','连续攻击','三段连击'),source:'随人物加入',use:'返回战斗后按 J'},
+    derive:{name:'派生动作',mark:'跃',status:'known',kind:'基础动作 · 物理',key:'S + J',summary:'地面向上挑击；跳跃后接空中追打，再以坠地爪击收尾。',facts:[['上挑','地面 S / ↓ + J'],['空中追打','空中 J'],['下砸','空中 S / ↓ + J']],source:'随人物加入',use:'结合方向与普攻衔接招式'},
+    dodge:{name:'闪避',mark:'闪',status:'known',kind:'基础动作 · 位移',key:'K / Shift',summary:'向面朝方向闪避，利用短暂的无敌窗口避开敌人攻击。已有中毒仍继续作用。',facts:facts('K / Shift','0.88 秒','短暂无敌'),source:'随人物加入',use:'返回战斗后按 K / Shift'},
+    claw:{name:'散魂铁爪',mark:'爪',status:'known',kind:'主动技能 · 妖力',key:'U',summary:'向前斜向横撕，挥出三道金白月牙爪刃，打击近处的敌人。落地时伴随砸地冲击。',facts:facts('U','5.5 秒','妖力强度 × 2.7'),source:'随人物加入',use:'返回战斗后按 U'},
+    blood:{name:'飞刃血爪',mark:'刃',status:'known',kind:'主动技能 · 妖力',key:'I',summary:'错落释放五道血刃，直线穿透沿途目标。同次释放对每个目标最多造成一次完整技能伤害。',facts:facts('I','8 秒','妖力强度 × 2.3'),source:'随人物加入',use:'返回战斗后按 I'},
+    fang:{name:'铁碎牙刀斩',mark:'锁',status:'locked',kind:'武器动作 · 物理',key:'剧情解锁',summary:'铁碎牙回应守护之心后，实际装备它可将普通爪击切换为刀斩，并延长近战触及范围。',facts:[['获得条件','完成对应觉醒剧情'],['使用条件','实际装备觉醒铁碎牙'],['操作','替换普通攻击 · J']],source:'父亲的墓地 · 守护之牙',use:'沿主线追寻父亲留下的刀'},
+    unknown:{name:'未知奥义',mark:'?',status:'unknown',kind:'尚未知晓',key:'未知',summary:'尚未显露的力量，将在今后的旅程中逐步揭示。',facts:[['获得条件','随剧情揭示']],source:'继续当前主线，寻找新的线索。',use:'力量的传承仍在继续'},
+    arrow:{name:'普通射箭',mark:'弓',status:'known',kind:'基础动作 · 物理',key:'J',summary:'向前方目标射箭，辅助瞄准前方妖怪与结点。',facts:facts('J','连续攻击','普通箭 · 物理伤害'),source:'随人物加入',use:'切换至戈薇后按 J'},
+    spirit:{name:'破魔之矢',mark:'矢',status:'known',kind:'主动技能 · 灵力',key:'U',summary:'射出蕴含灵力的穿透箭，沿途打击多个目标。',facts:facts('U','5.5 秒','灵力强度 × 3.2'),source:'随人物加入',use:'切换至戈薇后按 U'},
+    shield:{name:'灵光守护',mark:'护',status:'known',kind:'主动技能 · 自用结界',key:'I',summary:'为戈薇自身开启结界。结界破碎当次的伤害不会溢出到本体。',facts:[['操作','I'],['冷却','11 秒'],['结界耐久','48'],['持续时间','4 秒']],source:'随人物加入',use:'切换至戈薇后按 I'}
+  };
+  const heroes={inuyasha:{name:'犬夜叉',caption:'妖力 · 爪技与刀技',sample:'铁碎牙觉醒前',defaultSkill:'claw',branches:[{name:'基础动作',ids:['attack','derive','dodge']},{name:'妖力爪技',ids:['claw','blood']},{name:'铁碎牙刀技',ids:['fang','unknown']}]},kagome:{name:'戈薇',caption:'灵力 · 弓术与守护',sample:'人物加入后',defaultSkill:'spirit',branches:[{name:'基础动作',ids:['arrow','dodge']},{name:'灵力弓术',ids:['spirit','unknown']},{name:'守护之力',ids:['shield']}]}};
+  const state={hero:'inuyasha',skill:'claw'};
+  const design={spacing:23,detailWidth:226,unknownVisible:true};
+  function restore(saved){if(!saved)return;const s=saved.modelContent;if(s&&heroes[s.hero]){state.hero=s.hero;state.skill=heroes[s.hero].branches.some(b=>b.ids.includes(s.skill))?s.skill:heroes[s.hero].defaultSkill;}}
+  restore(window.openai?.widgetState);
+  function save(){if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{design:'规整分层技能树',hero:state.hero,skill:state.skill},privateContent:{}}).catch(()=>{});}
+  function render(){
+    const hero=heroes[state.hero];
+    if(!design.unknownVisible&&state.skill==='unknown')state.skill=hero.defaultSkill;
+    root.style.setProperty('--st-space',design.spacing+'px');root.style.setProperty('--st-detail',design.detailWidth+'px');
+    root.querySelector('[data-hero-name]').textContent=hero.name;root.querySelector('[data-hero-caption]').textContent=hero.caption;root.querySelector('[data-sample]').textContent=hero.sample;
+    root.querySelectorAll('[data-hero]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.hero===state.hero)));
+    root.querySelector('[data-branches]').innerHTML=hero.branches.map(branch=>'<section class="st-branch'+(branch.ids.includes(state.skill)?' is-related':'')+'" aria-label="'+branch.name+'"><h4>'+branch.name+'</h4><div class="st-nodes">'+branch.ids.filter(id=>design.unknownVisible||id!=='unknown').map(id=>{const s=records[id];return '<button type="button" class="st-node cursor-interaction" data-skill="'+id+'" data-status="'+s.status+'" aria-pressed="'+(id===state.skill)+'" aria-label="'+s.name+'，'+(s.status==='known'?'已掌握':s.status==='locked'?'剧情未解锁':'未知能力')+'"><span class="st-diamond" aria-hidden="true"><i>'+s.mark+'</i></span><span class="st-node-label">'+s.name+'</span><small>'+(s.status==='known'?s.key:s.status==='locked'?'剧情未解锁':'尚未揭示')+'</small></button>';}).join('')+'</div></section>').join('');
+    const s=records[state.skill];
+    root.querySelector('[data-detail]').innerHTML='<div class="st-overline">招式详录</div><div class="st-detail-mark" aria-hidden="true"><i>'+s.mark+'</i></div><h3>'+s.name+'</h3><p class="st-kind">'+s.kind+'</p><span class="st-status">'+(s.status==='known'?'◆ 已掌握':s.status==='locked'?'◇ 剧情未解锁':'? 未知能力')+'</span><p class="st-description">'+s.summary+'</p><dl class="st-facts">'+s.facts.map(([k,v])=>'<div><dt>'+k+'</dt><dd>'+v+'</dd></div>').join('')+'</dl><p class="st-source"><span>获得线索</span>'+s.source+'</p><p class="st-use">'+s.use+'</p>';
+  }
+  root.addEventListener('click',event=>{const heroButton=event.target.closest('[data-hero]'),skillButton=event.target.closest('[data-skill]');if(heroButton){state.hero=heroButton.dataset.hero;state.skill=heroes[state.hero].defaultSkill;render();save();}else if(skillButton){state.skill=skillButton.dataset.skill;render();root.querySelector('[data-skill="'+state.skill+'"]').focus({preventScroll:true});save();}});
+  window.addEventListener('openai:set_globals',event=>{if(event.detail?.globals?.widgetState){restore(event.detail.globals.widgetState);render();}});
+  render();
+  if(globalThis.Tweak){const tweak=new Tweak({container:root,onChange:render});tweak.addSlider(design,'spacing',{label:'节点纵向间距',min:14,max:34,unit:'px'});tweak.addSlider(design,'detailWidth',{label:'技能说明栏宽度',min:200,max:260,unit:'px'});tweak.addToggle(design,'unknownVisible',{label:'显示远期未知节点'});}
+})();
+</script>

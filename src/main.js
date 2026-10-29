@@ -199,20 +199,49 @@ function bestiary(journal = false) {
 function toggleSound() { save.sound = !save.sound; audio.unlock(); audio.enabled = save.sound; if (hasSave) game.store(); updateSummary(); }
 function settings(journal = false) {
   const running = ['playing', 'paused'].includes(game.state);
-  showPanel(journal ? '片刻休憩' : '旅途指南', 'CONTROLS & SETTINGS', `<div class="settings-grid"><section><h3>掌握你的步伐</h3><div class="controls-list"><span>左右移动</span><span><kbd>A</kbd> <kbd>D</kbd> / <kbd>←</kbd> <kbd>→</kbd></span><span>跳跃</span><span><kbd>Space</kbd> / <kbd>W</kbd> / <kbd>↑</kbd></span><span>普通攻击 · 可按住</span><span><kbd>J</kbd></span><span>犬夜叉上挑 / 空中下砸</span><span><kbd>S</kbd> / <kbd>↓</kbd> ＋ <kbd>J</kbd></span><span>犬夜叉空中追打</span><span>跳跃后 <kbd>J</kbd></span><span>闪避 · 短暂无敌</span><span><kbd>K</kbd> / <kbd>Shift</kbd></span><span>主动技能</span><span><kbd>U</kbd> <kbd>I</kbd></span><span>切换犬夜叉 / 戈薇</span><span><kbd>1</kbd> <kbd>2</kbd> / <kbd>Tab</kbd></span><span>继续对话</span><span><kbd>E</kbd> / <kbd>Enter</kbd></span><span>人物面板</span><span><kbd>C</kbd></span><span>暂停 / 继续</span><span><kbd>Esc</kbd></span></div><p class="settings-note">犬夜叉可用上挑将普通妖怪打浮空，再跳起追打，空中按S＋J下砸；飞刃血爪可从远处穿透多只妖怪。观察敌人头上的感叹号，及时闪避或跳跃。戈薇的箭会辅助瞄准前方目标；灵光守护为戈薇开启耐久结界，破界的一击不会溢出伤及本体。神社灯笼会保存检查点并恢复队伍。</p></section><section><h3>整装再出发</h3><div class="settings-actions">${running && !journal ? '<button class="button primary" id="resume-game">继续旅程 →</button><button class="button secondary" id="restart-checkpoint">从检查点重试</button>' : ''}<button class="button secondary" id="settings-sound">${save.sound ? '♫ 关闭声音' : '♩ 开启声音'}</button><button class="button secondary" id="export-save">导出存档</button><button class="button secondary" id="import-save">导入存档</button>${running && !journal ? '<button class="button secondary" id="return-home">返回首页</button>' : ''}<p class="settings-note">进度自动保存在当前浏览器。导出存档可保留备份，或将旅程带到另一台设备。导入将替换当前进度。</p></div></section></div>`, journal ? 'settings' : null);
-  const displayButton = document.createElement('button');
-  displayButton.id = 'settings-fullscreen';
-  displayButton.className = 'button secondary';
-  displayButton.textContent = fullscreenActive() ? '退出全屏' : '全屏体验';
-  displayButton.addEventListener('click', async () => {
-    await toggleFullscreen();
-    displayButton.textContent = fullscreenActive() ? '退出全屏' : '全屏体验';
-  });
-  $('.settings-actions').prepend(displayButton);
-  $('#panel-content').insertAdjacentHTML('beforeend', '<nav class="preview-links" aria-label="独立资源预览"><a href="./scene-lab.html">场景资源预览 ↗</a><a href="./monster-lab.html">招式与妖怪验证场 ↗</a></nav>');
+  const controlRows = rows => rows.map(([label, keys]) => '<div><dt>' + label + '</dt><dd>' + keys + '</dd></div>').join('');
+  const movement = [
+    ['左右移动', '<kbd>A</kbd><kbd>D</kbd><span>/</span><kbd>←</kbd><kbd>→</kbd>'],
+    ['跳跃', '<kbd>Space</kbd><span>/</span><kbd>W</kbd><span>/</span><kbd>↑</kbd>'],
+    ['互动 / 对话', '<kbd>E</kbd><span>/</span><kbd>Enter</kbd>'],
+    ['切换伙伴', '<kbd>1</kbd><kbd>2</kbd><span>/</span><kbd>Tab</kbd>'],
+    ['人物面板', '<kbd>C</kbd>'],
+    ['暂停 / 继续', '<kbd>Esc</kbd>']
+  ];
+  const combat = [
+    ['普通攻击 <small>可按住</small>', '<kbd>J</kbd>'],
+    ['闪避 <small>短暂无敌</small>', '<kbd>K</kbd><span>/</span><kbd>Shift</kbd>'],
+    ['主动技能一', '<kbd>U</kbd>'],
+    ['主动技能二', '<kbd>I</kbd>'],
+    ['上挑 / 下砸', '<kbd>S</kbd><span>/</span><kbd>↓</kbd><span>＋</span><kbd>J</kbd>'],
+    ['空中追打', '<span>跳跃后</span><kbd>J</kbd>']
+  ];
+  const content = [
+    '<div class="settings-panel"><div class="settings-dashboard">',
+    '<aside class="settings-side">',
+    '<section class="settings-card settings-preferences" aria-labelledby="settings-preferences-title"><header class="settings-card-heading"><span class="settings-card-mark" aria-hidden="true">03</span><h3 id="settings-preferences-title">显示与声音</h3></header>',
+    '<div class="settings-option"><span><strong>全屏显示</strong><small id="settings-fullscreen-state">' + (fullscreenActive() ? '全屏模式' : '窗口模式') + '</small></span><button type="button" class="button secondary" id="settings-fullscreen">' + (fullscreenActive() ? '退出全屏' : '全屏体验') + '</button></div>',
+    '<div class="settings-option"><span><strong>游戏声音</strong><small id="settings-sound-state" data-enabled="' + save.sound + '">音乐与音效 · ' + (save.sound ? '已开启' : '已关闭') + '</small></span><button type="button" class="button secondary" id="settings-sound">' + (save.sound ? '关闭声音' : '开启声音') + '</button></div></section>',
+    '<section class="settings-card settings-storage" aria-labelledby="settings-storage-title"><header class="settings-card-heading"><span class="settings-card-mark" aria-hidden="true">04</span><h3 id="settings-storage-title">存档管理</h3></header>',
+    '<p class="settings-storage-state">' + (hasSave ? '进度自动保存至当前浏览器' : '旅程开始后自动保存') + '</p><div class="settings-save-actions"><button type="button" class="button secondary" id="export-save">导出存档</button><button type="button" class="button secondary" id="import-save">导入存档</button></div>',
+    '<p class="settings-card-note">导出可保留备份或带到其他设备；导入将替换当前进度。</p></section></aside>',
+    '<section class="settings-card settings-movement" aria-labelledby="settings-movement-title"><header class="settings-card-heading"><span class="settings-card-mark" aria-hidden="true">01</span><h3 id="settings-movement-title">移动与互动</h3></header><dl class="settings-key-list">' + controlRows(movement) + '</dl><p class="settings-card-note">也可点击队伍人物卡切换出战。</p></section>',
+    '<section class="settings-card settings-combat" aria-labelledby="settings-combat-title"><header class="settings-card-heading"><span class="settings-card-mark" aria-hidden="true">02</span><h3 id="settings-combat-title">战斗操作</h3></header><dl class="settings-key-list">' + controlRows(combat) + '</dl><p class="settings-card-note">上挑、下砸与空中追打为犬夜叉动作。招式详情见「伙伴 → 技能」。</p></section></div>',
+    '<aside class="settings-hints" aria-labelledby="settings-hints-title"><h3 id="settings-hints-title">旅途提示</h3><div><p><strong>犬夜叉</strong>上挑可将普通妖怪打浮空，再跳起追打；飞刃血爪能从远处穿透多个目标。</p><p><strong>戈薇</strong>箭矢辅助瞄准前方目标，灵光守护提供结界；破界当次伤害不溢出。</p><p><strong>探索</strong>留意妖怪头顶预警，及时闪避或跳跃。神社灯笼保存检查点并恢复队伍。</p></div></aside>',
+    '<nav class="settings-preview-links preview-links" aria-label="独立资源预览"><span>独立预览</span><a href="./scene-lab.html">场景资源 ↗</a><a href="./monster-lab.html">招式与妖怪 ↗</a></nav>',
+    running && !journal ? '<div class="settings-session-actions"><button type="button" class="button primary" id="resume-game">继续旅程 →</button><button type="button" class="button secondary" id="restart-checkpoint">从检查点重试</button><button type="button" class="button secondary" id="return-home">返回首页</button></div>' : '',
+    '</div>'
+  ].join('');
+  showPanel(journal ? '片刻休憩' : '旅途指南', 'CONTROLS & SETTINGS', content, journal ? 'settings' : null);
+  $('#settings-fullscreen').addEventListener('click', toggleFullscreen);
   $('#resume-game')?.addEventListener('click', () => panel.close());
   $('#restart-checkpoint')?.addEventListener('click', () => beginStage(game.level.id, true));
-  $('#settings-sound').addEventListener('click', () => { toggleSound(); settings(journal); });
+  $('#settings-sound').addEventListener('click', () => {
+    toggleSound();
+    $('#settings-sound').textContent = save.sound ? '关闭声音' : '开启声音';
+    $('#settings-sound-state').textContent = '音乐与音效 · ' + (save.sound ? '已开启' : '已关闭');
+    $('#settings-sound-state').dataset.enabled = String(save.sound);
+  });
   $('#export-save').addEventListener('click', exportSave);
   $('#import-save').addEventListener('click', () => { importReturnJournal = journal; $('#import-file').click(); });
   $('#return-home')?.addEventListener('click', () => { resumeAfterPanel = false; goHome(); panel.close(); });
@@ -516,6 +545,8 @@ function updateFullscreen() {
   }
   const settingsButton = $('#settings-fullscreen');
   if (settingsButton) settingsButton.textContent = active ? '退出全屏' : '全屏体验';
+  const settingsState = $('#settings-fullscreen-state');
+  if (settingsState) settingsState.textContent = active ? '全屏模式' : '窗口模式';
 }
 async function toggleFullscreen() {
   try {

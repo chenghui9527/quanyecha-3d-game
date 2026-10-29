@@ -26,8 +26,8 @@ export function journalIcon(kind, color = '#d9c290', empty = false) {
   return '<svg class="journal-item-icon' + (empty ? ' is-empty' : '') + ' icon-' + kind + '" viewBox="' + (kind === 'sword' ? '0 0 200 100' : '0 0 100 100') + '" aria-hidden="true" fill="' + (empty ? 'none' : color) + '" stroke="' + (empty ? '#71817d' : '#a69372') + '" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + (drawings[kind] || drawings.accessory) + '</svg>';
 }
 const companionCardPortraits = {
-  inuyasha: './assets/ui/companion-inuyasha-v1.png',
-  kagome: './assets/ui/companion-kagome-v1.png'
+  inuyasha: './assets/ui/companion-inuyasha-pixel-v2.png',
+  kagome: './assets/ui/companion-kagome-pixel-v2.png'
 };
 const companionPages = [['attributes', '属性'], ['skills', '技能'], ['equipment', '装备'], ['growth', '成长']];
 const gearName = (game, id) => id ? equipmentDetails(game.save, id)?.name || '未装备' : '徒手 · 爪击';

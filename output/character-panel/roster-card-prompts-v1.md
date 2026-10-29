@@ -1,10 +1,12 @@
-# 伙伴角色卡头像 v1 · 生成记录
+# 伙伴角色卡头像 v1 · 历史生成记录
+
+此版平滑动漫风已由[像素风v2](roster-card-prompts-pixel-v2.md)替换，本文保留原始生成过程。
 
 日期：2026-10-29。工具：内置 imagegen，透明背景输出；参考图为 [已确认六部位UI](character-equipment-v4.png)。
 
 用途：伙伴列表角色卡使用独立半身头像，左侧占满卡片高度，右侧姓名与身份同一行，成长阶段另起一行。头像不替换战斗、HUD或中央人物素材。
 
-已保存并接入：`assets/ui/companion-inuyasha-v1.png`、`assets/ui/companion-kagome-v1.png`。保留生成原图及透明通道，不裁切改写历史UI设计图。
+历史输出：`assets/ui/companion-inuyasha-v1.png`、`assets/ui/companion-kagome-v1.png`。保留生成原图及透明通道，不裁切改写历史UI设计图。
 
 ## 犬夜叉
 

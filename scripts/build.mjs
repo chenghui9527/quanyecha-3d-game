@@ -4,7 +4,7 @@ import vm from 'node:vm';
 // All three editions work from file://, without a local HTTP server.
 const common = ['data', 'inventory', 'factions', 'campaign', 'combat', 'monsters', 'save', 'inuyasha', 'scenery', 'engine', 'art'];
 const assets = ['heroes', 'title-scene', 'monsters/crow', 'monsters/spider', 'monsters/hornet', 'monsters/harpy', 'monsters/rat', 'monsters/crawler', 'monsters/maw', 'monsters/manyeye', 'monsters/eyeball', 'monsters/beetle', 'monsters/tongue', 'monsters/wingface', 'monsters/humpneck', 'monsters/cyclops', 'monsters/skullwhisker', 'characters/inuyasha-combat', 'characters/inuyasha-blood-claws', 'scenery/forest-tree', 'scenery/sacred-tree', 'scenery/village-house', 'scenery/wooden-door', 'scenery/bone-eaters-well', 'scenery/terrain', 'scenery/shrine-torii'];
-assets.push('ui/companion-inuyasha-v1', 'ui/companion-kagome-v1');
+assets.push('ui/companion-inuyasha-pixel-v2', 'ui/companion-kagome-pixel-v2');
 const embedded = new Map();
 for (const name of assets) embedded.set(name, `data:image/png;base64,${(await readFile(`assets/${name}.png`)).toString('base64')}`);
 embedded.set('ui/title-logo', `data:image/png;base64,${(await readFile('assets/ui/title-logo.png')).toString('base64')}`);
